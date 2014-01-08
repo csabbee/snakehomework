@@ -31,12 +31,15 @@ import toplist.Toplist;
 import comparator.Comp;
 
 public class Snake extends JFrame implements Runnable, SnakeInterface {
-	/**
+    private static final int EGYSEG = 10;
+    /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int WIDTH = 506, HEIGHT = 380, egyseg = 10;
-	int palyasz = 50 * egyseg, palyam = 30 * egyseg;
+	int WIDTH = 506;
+	int HEIGHT = 380;
+	int palyasz = 50 * EGYSEG;
+	int palyam = 30 * EGYSEG;
 	int sebesseg, pontok, hossz, xValt, yValt;
 	boolean fut, mehetBalra, mehetJobbra, mehetFel, mehetLe, evett, magabaMent, gameOver;
 	int[] pozX = new int[125];
@@ -58,12 +61,12 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 
 	public void init() {
-		pozX[0] = 24 * egyseg;
-		pozY[0] = 14 * egyseg;
+		pozX[0] = 24 * EGYSEG;
+		pozY[0] = 14 * EGYSEG;
 		sebesseg = 70;
 		pontok = 0;
 		hossz = 3;
-		xValt = +egyseg;
+		xValt = +EGYSEG;
 		yValt = 0;
 		fut = false;
 		magabaMent = false;
@@ -121,13 +124,13 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 		// Keret megrajzol�sa �s hozz�ad�sa a p�ly�hoz
 		keret[0] = new JPanel();
-		keret[0].setBounds(0, 0, palyasz, egyseg);
+		keret[0].setBounds(0, 0, palyasz, EGYSEG);
 		keret[1] = new JPanel();
-		keret[1].setBounds(0, 0, egyseg, palyam);
+		keret[1].setBounds(0, 0, EGYSEG, palyam);
 		keret[2] = new JPanel();
-		keret[2].setBounds(0, palyam - egyseg, palyasz, egyseg);
+		keret[2].setBounds(0, palyam - EGYSEG, palyasz, EGYSEG);
 		keret[3] = new JPanel();
-		keret[3].setBounds(palyasz - egyseg, 0, egyseg, palyam);
+		keret[3].setBounds(palyasz - EGYSEG, 0, EGYSEG, palyam);
 		jatekTer.add(keret[0]);
 		jatekTer.add(keret[1]);
 		jatekTer.add(keret[2]);
@@ -295,23 +298,17 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		start();
 	}
 
-	/*
-	 * Az els� snake l�trehoz�sa �s a p�ly�ra rajzol�sa.
-	 */
+	
 	void elsoSnake() {
-		// Minden kock�t k�l�n rajzol ki a f�ggv�ny, ez�rt a ciklus
 		for (int i = 0; i < hossz; i++) {
-			// Egy "kocka" l�trehoz�sa �s annak be�ll�t�sai (helyzet, sz�n)
 			kocka[i] = new JButton();
 			kocka[i].setEnabled(false);
-			kocka[i].setBounds(pozX[i], pozY[i], egyseg, egyseg);
+			kocka[i].setBounds(pozX[i], pozY[i], EGYSEG, EGYSEG);
 			kocka[i].setBackground(Color.BLACK);
 
-			// A kocka megjelen�t�se a p�ly�n
 			jatekTer.add(kocka[i]);
 
-			// A k�vetkez� elem koordin�t�inak a megv�ltoztat�sa
-			pozX[i + 1] = pozX[i] - egyseg;
+			pozX[i + 1] = pozX[i] - EGYSEG;
 			pozY[i + 1] = pozY[i];
 		}
 	}
@@ -327,13 +324,13 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		kocka[hossz].setBackground(Color.BLACK);
 		jatekTer.add(kocka[hossz]);
 
-		int kajax = 20 + (egyseg * random.nextInt(46));
-		int kajay = 20 + (egyseg * random.nextInt(26));
+		int kajax = 20 + (EGYSEG * random.nextInt(46));
+		int kajay = 20 + (EGYSEG * random.nextInt(26));
 
 		
 		pozX[hossz] = kajax;
 		pozY[hossz] = kajay;
-		kocka[hossz].setBounds(pozX[hossz], pozY[hossz], egyseg, egyseg);
+		kocka[hossz].setBounds(pozX[hossz], pozY[hossz], EGYSEG, EGYSEG);
 
 		hossz++;
 	}
@@ -457,7 +454,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		// Megv�ltoztatja az els� elemnek a poz�ci�j�t a megadott ir�nyba
 		pozX[0] = pozX[0] + xValt;
 		pozY[0] = pozY[0] + yValt;
-		kocka[0].setBounds(pozX[0], pozY[0], egyseg, egyseg);
+		kocka[0].setBounds(pozX[0], pozY[0], EGYSEG, EGYSEG);
 
 		// Megv�ltoztatja a t�bbi elem helyzet�t az el�tt l�v� elem�re
 		for (int i = 1; i < hossz; i++) {
@@ -493,7 +490,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			novekszik();
 			evett = false;
 		} else {
-			kocka[hossz - 1].setBounds(pozX[hossz - 1], pozY[hossz - 1], egyseg, egyseg);
+			kocka[hossz - 1].setBounds(pozX[hossz - 1], pozY[hossz - 1], EGYSEG, EGYSEG);
 		}
 
 		// A p�lya friss�t�se
@@ -508,7 +505,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	@Override
     public void keyPressed(int keyCode) {
 		if (mehetBalra == true && keyCode == java.awt.event.KeyEvent.VK_LEFT) {
-			xValt = -egyseg;
+			xValt = -EGYSEG;
 			yValt = 0;
 			mehetJobbra = false;
 			mehetFel = true;
@@ -516,13 +513,13 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		}
 		if (mehetFel == true && keyCode == java.awt.event.KeyEvent.VK_UP) {
 			xValt = 0;
-			yValt = -egyseg;
+			yValt = -EGYSEG;
 			mehetLe = false;
 			mehetJobbra = true;
 			mehetBalra = true;
 		}
 		if (mehetJobbra == true && keyCode == java.awt.event.KeyEvent.VK_RIGHT) {
-			xValt = +egyseg;
+			xValt = +EGYSEG;
 			yValt = 0;
 			mehetBalra = false;
 			mehetFel = true;
@@ -530,7 +527,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		}
 		if (mehetLe == true && keyCode == java.awt.event.KeyEvent.VK_DOWN) {
 			xValt = 0;
-			yValt = +egyseg;
+			yValt = +EGYSEG;
 			mehetFel = false;
 			mehetJobbra = true;
 			mehetBalra = true;
