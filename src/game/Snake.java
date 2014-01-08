@@ -6,8 +6,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,57 +25,55 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+import listeners.SnakeKeyListener;
 import toplist.Toplist;
 
 import comparator.Comp;
 
-public class Snake extends JFrame implements KeyListener, Runnable {
+public class Snake extends JFrame implements Runnable, SnakeInterface {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	int WIDTH = 506, HEIGHT = 380, egyseg = 10;
 	int palyasz = 50 * egyseg, palyam = 30 * egyseg;
-	int sebesseg, pontok, hossz, xvalt, yvalt;
-	boolean fut, mehetbalra, mehetjobbra, mehetfel, mehetle, evett, magabament, gameover;
-	int[] pozx = new int[125];
-	int[] pozy = new int[125];
-	Point[] p = new Point[125];
-	Random r = new Random();
+	int sebesseg, pontok, hossz, xValt, yValt;
+	boolean fut, mehetBalra, mehetJobbra, mehetFel, mehetLe, evett, magabaMent, gameOver;
+	int[] pozX = new int[125];
+	int[] pozY = new int[125];
+	Point[] points = new Point[125];
+	Random random = new Random();
+	
 	FileHandler fileHandler;
+	private List<Toplist> lista = new ArrayList<Toplist>();
 	
 	JButton[] kocka = new JButton[125];
 	JFrame frame;
-	JPanel jatekter, pontszam, top;
+	JPanel jatekTer, pontSzam, top;
 	JPanel[] keret = new JPanel[4];
 	JMenuBar menubar;
 	JMenu jatek, beallitasok, segitseg;
-	JLabel pontkiiras;
+	JLabel pontKiIras;
 	JScrollPane scrollpane;
 
-	public List<Toplist> lista = new ArrayList<Toplist>();
 
-	/*
-	 * Az �rt�kek alaphelyzetbe �ll�t�sa �s a toplist�t tartalmaz� f�jl
-	 * megnyit�sa
-	 */
 	public void init() {
-		pozx[0] = 24 * egyseg;
-		pozy[0] = 14 * egyseg;
+		pozX[0] = 24 * egyseg;
+		pozY[0] = 14 * egyseg;
 		sebesseg = 70;
 		pontok = 0;
 		hossz = 3;
-		xvalt = +egyseg;
-		yvalt = 0;
+		xValt = +egyseg;
+		yValt = 0;
 		fut = false;
-		magabament = false;
-		mehetbalra = false;
-		mehetjobbra = true;
-		mehetfel = true;
-		mehetle = true;
+		magabaMent = false;
+		mehetBalra = false;
+		mehetJobbra = true;
+		mehetFel = true;
+		mehetLe = true;
 		evett = true;
-		gameover = false;
-		fileHandler.fajlmegnyitas(this);
+		gameOver = false;
+		fileHandler.fajlmegnyitas(lista);
 	}
 
 	/*
@@ -94,14 +90,15 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	 * inicializ�l�sa, az els� snake l�trehoz�sa, valamint itt h�odik meg a
 	 * "mozgat�" f�ggv�ny is
 	 */
-	Snake() {
+	public Snake(SnakeKeyListener sankeKeyListener, FileHandler fileHandler) {
+	    this.fileHandler = fileHandler;
 		// Egy WIDTH, HEIGHT m�retekkel rendelkez� abalak l�trehoz�sa
 		frame = new JFrame("Snake v0.7");
 		frame.setSize(WIDTH, HEIGHT);
 
 		// Az ablak r�szeinek l�trehoz�sa
-		jatekter = new JPanel();
-		pontszam = new JPanel();
+		jatekTer = new JPanel();
+		pontSzam = new JPanel();
 		top = new JPanel();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -111,14 +108,14 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 
 		// A p�lya r�szeinek r�szletes be�ll�t�sa (poz�ci�, sz�less�g,
 		// magass�g, sz�n) �s hozz�ad�sa az ablakhoz
-		frame.add(jatekter, BorderLayout.CENTER);
-		frame.add(pontszam, BorderLayout.SOUTH);
+		frame.add(jatekTer, BorderLayout.CENTER);
+		frame.add(pontSzam, BorderLayout.SOUTH);
 		frame.setLayout(null);
-		jatekter.setLayout(null);
-		jatekter.setBounds(0, 0, palyasz, palyam);
-		jatekter.setBackground(Color.LIGHT_GRAY);
-		pontszam.setBounds(0, palyam, palyasz, 30);
-		pontszam.setBackground(Color.GRAY);
+		jatekTer.setLayout(null);
+		jatekTer.setBounds(0, 0, palyasz, palyam);
+		jatekTer.setBackground(Color.LIGHT_GRAY);
+		pontSzam.setBounds(0, palyam, palyasz, 30);
+		pontSzam.setBackground(Color.GRAY);
 		top.setBounds(0, 0, palyasz, palyam);
 		top.setBackground(Color.LIGHT_GRAY);
 
@@ -131,24 +128,24 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		keret[2].setBounds(0, palyam - egyseg, palyasz, egyseg);
 		keret[3] = new JPanel();
 		keret[3].setBounds(palyasz - egyseg, 0, egyseg, palyam);
-		jatekter.add(keret[0]);
-		jatekter.add(keret[1]);
-		jatekter.add(keret[2]);
-		jatekter.add(keret[3]);
+		jatekTer.add(keret[0]);
+		jatekTer.add(keret[1]);
+		jatekTer.add(keret[2]);
+		jatekTer.add(keret[3]);
 
 		// Az els� snake l�trehoz�sa �s kirajzol�sa
 		elsoSnake();
 
 		// A pontsz�m k��r�sa a k�perny�re
-		pontkiiras = new JLabel("Pontsz�m: " + pontok);
-		pontkiiras.setForeground(Color.BLACK);
-		pontszam.add(pontkiiras);
+		pontKiIras = new JLabel("Pontsz�m: " + pontok);
+		pontKiIras.setForeground(Color.BLACK);
+		pontSzam.add(pontKiIras);
 
 		// Az ablak be�ll�t�sai
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
-		frame.addKeyListener(this);
+		frame.addKeyListener(sankeKeyListener);
 
 		// A mozgat�s elind�t�sa
 		start();
@@ -187,7 +184,7 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		toplist.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekter, scrollpane);
+				JOptionPane.showMessageDialog(jatekTer, scrollpane);
 			}
 		});
 		kilepes.addActionListener(new ActionListener() {
@@ -237,13 +234,13 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		keszito.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekter, "K�sz�t�: K�rlek Refaktor�lj\n" + "Programn�v: Snake\n" + "Verzi�sz�m: v0.7");
+				JOptionPane.showMessageDialog(jatekTer, "K�sz�t�: K�rlek Refaktor�lj\n" + "Programn�v: Snake\n" + "Verzi�sz�m: v0.7");
 			}
 		});
 		iranyitas.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekter, "Ir�ny�t�s a kurzor seg�ts�g�vel:\n" + "-Fel ny�l: a k�gy� felfele mozog\n"
+				JOptionPane.showMessageDialog(jatekTer, "Ir�ny�t�s a kurzor seg�ts�g�vel:\n" + "-Fel ny�l: a k�gy� felfele mozog\n"
 						+ "-Le ny�l: a k�gy� lefele mozog\n" + "-Jobbra ny�l: a k�gy� jobbra mozog\n" + "-Balra ny�l: a k�gy� balra mozog\n");
 			}
 		});
@@ -269,30 +266,30 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		init();
 
 		// A p�lya lepucol�sa
-		jatekter.removeAll();
+		jatekTer.removeAll();
 		scrollpane.removeAll();
 
 		// Ha az el�z� j�t�kban meghalt a k�gy�, akkor a j�t�k v�ge kijelz�
 		// t�rl�se az ablakb�l
-		if (gameover == true) {
+		if (gameOver == true) {
 			frame.remove(top);
 		}
 
 		// A keret hozz�ad�sa a p�ly�hoz
-		jatekter.add(keret[0]);
-		jatekter.add(keret[1]);
-		jatekter.add(keret[2]);
-		jatekter.add(keret[3]);
+		jatekTer.add(keret[0]);
+		jatekTer.add(keret[1]);
+		jatekTer.add(keret[2]);
+		jatekTer.add(keret[3]);
 
 		// Az els� k�gy� l�trehoz�sa, kirajzol�sa
 		elsoSnake();
 
 		// A p�lya hozz�ad�sa az ablakhoz, annak �jrarajzol�sa �s a pontsz�m
 		// ki�r�sa
-		frame.add(jatekter, BorderLayout.CENTER);
+		frame.add(jatekTer, BorderLayout.CENTER);
 		frame.repaint();
 		frame.setVisible(true);
-		pontkiiras.setText("Pontsz�m: " + pontok);
+		pontKiIras.setText("Pontsz�m: " + pontok);
 
 		// A mozgat�s elind�t�sa
 		start();
@@ -307,15 +304,15 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 			// Egy "kocka" l�trehoz�sa �s annak be�ll�t�sai (helyzet, sz�n)
 			kocka[i] = new JButton();
 			kocka[i].setEnabled(false);
-			kocka[i].setBounds(pozx[i], pozy[i], egyseg, egyseg);
+			kocka[i].setBounds(pozX[i], pozY[i], egyseg, egyseg);
 			kocka[i].setBackground(Color.BLACK);
 
 			// A kocka megjelen�t�se a p�ly�n
-			jatekter.add(kocka[i]);
+			jatekTer.add(kocka[i]);
 
 			// A k�vetkez� elem koordin�t�inak a megv�ltoztat�sa
-			pozx[i + 1] = pozx[i] - egyseg;
-			pozy[i + 1] = pozy[i];
+			pozX[i + 1] = pozX[i] - egyseg;
+			pozY[i + 1] = pozY[i];
 		}
 	}
 
@@ -328,19 +325,16 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		kocka[hossz] = new JButton();
 		kocka[hossz].setEnabled(false);
 		kocka[hossz].setBackground(Color.BLACK);
-		jatekter.add(kocka[hossz]);
+		jatekTer.add(kocka[hossz]);
 
-		// Randomgener�torral l�trehozza az �tel x,y koordin�t�it
-		int kajax = 20 + (egyseg * r.nextInt(46));
-		int kajay = 20 + (egyseg * r.nextInt(26));
+		int kajax = 20 + (egyseg * random.nextInt(46));
+		int kajay = 20 + (egyseg * random.nextInt(26));
 
-		// Be�ll�tja a koordin�t�it a kaj�nak, �s kirajzolja azt a megadott
-		// poz�ci�ban
-		pozx[hossz] = kajax;
-		pozy[hossz] = kajay;
-		kocka[hossz].setBounds(pozx[hossz], pozy[hossz], egyseg, egyseg);
+		
+		pozX[hossz] = kajax;
+		pozY[hossz] = kajay;
+		kocka[hossz].setBounds(pozX[hossz], pozY[hossz], egyseg, egyseg);
 
-		// Megn�veli a k�gy� hossz�t jelz� v�ltoz�t
 		hossz++;
 	}
 
@@ -350,9 +344,8 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	 * bek�ri a nev�t, �s friss�ti a toplist�t. Ha nem akkor egy j�t�k v�ge
 	 * k�perny�t rajzol ki. A v�g�n pedig szerializ�l.
 	 */
-	void toplistabatesz() {
-		// A p�lya t�rl�se a k�perny�r�l.
-		frame.remove(jatekter);
+	void toplistabaTesz() {
+		frame.remove(jatekTer);
 
 		// Ha az el�rt eredm�ny jobb az eddigi legkisebb eredm�nyn�l
 		if (pontok > lista.get(9).getpont()) {
@@ -405,13 +398,12 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 			Collections.sort(lista, comp);
 
 			// A toplista friss�t�se, �s kirajzol�sa az ablakra
-			toplistafrissites();
+			toplistaFrissites();
 			top.removeAll();
 			top.add(scrollpane);
 			frame.repaint();
 			// Ha az eredm�ny nincs bent a legjobb 10-be
 		} else {
-			// A kiir�sok l�trehoz�sa �s hozz�ad�sa az ablakhoz
 			JLabel nemnyert1 = new JLabel("A j�t�knak v�ge!");
 			JLabel nemnyert2 = new JLabel("Sajnos nem ker�lt be az eredm�nyed a legjobb 10-be. Pr�b�lkozz �jra (F2).");
 			nemnyert1.setForeground(Color.BLACK);
@@ -420,21 +412,19 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 			top.add(nemnyert1);
 			top.add(nemnyert2);
 
-			// A toplista friss�t�se �s a top panel hozz�ad�sa az ablakhoz
-			toplistafrissites();
+			toplistaFrissites();
 			frame.add(top, BorderLayout.CENTER);
 			frame.setVisible(true);
 			frame.repaint();
 		}
-		// Szerializ�l�s
-		fileHandler.fajlbairas(this);
+		fileHandler.fajlbairas(lista);
 	}
 
 	/*
 	 * Ez a f�ggv�ny a toplist�t egy t�bl�zatba rakja
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	void toplistafrissites() {
+	void toplistaFrissites() {
 		// A t�bl�zat fejl�c�nek l�trehoz�sa
 		Vector colnames = new Vector();
 		colnames.add("N�v");
@@ -461,40 +451,40 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	void mozgat() {
 		// Lek�ri a k�gy� �sszes elem�nek poz�ci�j�t a p�ly�n
 		for (int i = 0; i < hossz; i++) {
-			p[i] = kocka[i].getLocation();
+			points[i] = kocka[i].getLocation();
 		}
 
 		// Megv�ltoztatja az els� elemnek a poz�ci�j�t a megadott ir�nyba
-		pozx[0] = pozx[0] + xvalt;
-		pozy[0] = pozy[0] + yvalt;
-		kocka[0].setBounds(pozx[0], pozy[0], egyseg, egyseg);
+		pozX[0] = pozX[0] + xValt;
+		pozY[0] = pozY[0] + yValt;
+		kocka[0].setBounds(pozX[0], pozY[0], egyseg, egyseg);
 
 		// Megv�ltoztatja a t�bbi elem helyzet�t az el�tt l�v� elem�re
 		for (int i = 1; i < hossz; i++) {
-			kocka[i].setLocation(p[i - 1]);
+			kocka[i].setLocation(points[i - 1]);
 		}
 
 		// Ellen�rzi, hogy a k�gy� nem-e ment �nmag�ba
 		for (int i = 1; i < hossz - 1; i++) {
-			if (p[0].equals(p[i])) {
-				magabament = true;
+			if (points[0].equals(points[i])) {
+				magabaMent = true;
 			}
 		}
 
 		// Ellen�rzi, hogy a k�gy� nem-e ment �nmag�ba vagy falnak. Ha igen
 		// akkor a j�t�knak v�ge proced�ra zajlik le, illetve le�ll a mozgat�s
-		if ((pozx[0] + 10 == palyasz) || (pozx[0] == 0) || (pozy[0] == 0) || (pozy[0] + 10 == palyam) || (magabament == true)) {
+		if ((pozX[0] + 10 == palyasz) || (pozX[0] == 0) || (pozY[0] == 0) || (pozY[0] + 10 == palyam) || (magabaMent == true)) {
 			fut = false;
-			gameover = true;
-			toplistabatesz();
+			gameOver = true;
+			toplistabaTesz();
 		}
 
 		// Ellen�rzi, hogy a k�gy� nem �rte-e el az �telt. Ha igen akkor n�veli
 		// a pontsz�mot
-		if (pozx[0] == pozx[hossz - 1] && pozy[0] == pozy[hossz - 1]) {
+		if (pozX[0] == pozX[hossz - 1] && pozY[0] == pozY[hossz - 1]) {
 			evett = true;
 			pontok = pontok + 5;
-			pontkiiras.setText("Pontsz�m: " + pontok);
+			pontKiIras.setText("Pontsz�m: " + pontok);
 		}
 
 		// Ha evett, akkor l�trehozza az �j �telt �s n�veli a k�gy�t, k�l�nben
@@ -503,11 +493,11 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 			novekszik();
 			evett = false;
 		} else {
-			kocka[hossz - 1].setBounds(pozx[hossz - 1], pozy[hossz - 1], egyseg, egyseg);
+			kocka[hossz - 1].setBounds(pozX[hossz - 1], pozY[hossz - 1], egyseg, egyseg);
 		}
 
 		// A p�lya friss�t�se
-		jatekter.repaint();
+		jatekTer.repaint();
 		frame.setVisible(true);
 	}
 
@@ -516,48 +506,39 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	 * a megfelel� m�veletet hajtja v�gre
 	 */
 	@Override
-    public void keyPressed(KeyEvent e) {
-		if (mehetbalra == true && e.getKeyCode() == 37) {
-			xvalt = -egyseg;
-			yvalt = 0;
-			mehetjobbra = false;
-			mehetfel = true;
-			mehetle = true;
+    public void keyPressed(int keyCode) {
+		if (mehetBalra == true && keyCode == java.awt.event.KeyEvent.VK_LEFT) {
+			xValt = -egyseg;
+			yValt = 0;
+			mehetJobbra = false;
+			mehetFel = true;
+			mehetLe = true;
 		}
-		if (mehetfel == true && e.getKeyCode() == 38) {
-			xvalt = 0;
-			yvalt = -egyseg;
-			mehetle = false;
-			mehetjobbra = true;
-			mehetbalra = true;
+		if (mehetFel == true && keyCode == java.awt.event.KeyEvent.VK_UP) {
+			xValt = 0;
+			yValt = -egyseg;
+			mehetLe = false;
+			mehetJobbra = true;
+			mehetBalra = true;
 		}
-		if (mehetjobbra == true && e.getKeyCode() == 39) {
-			xvalt = +egyseg;
-			yvalt = 0;
-			mehetbalra = false;
-			mehetfel = true;
-			mehetle = true;
+		if (mehetJobbra == true && keyCode == java.awt.event.KeyEvent.VK_RIGHT) {
+			xValt = +egyseg;
+			yValt = 0;
+			mehetBalra = false;
+			mehetFel = true;
+			mehetLe = true;
 		}
-		if (mehetle == true && e.getKeyCode() == 40) {
-			xvalt = 0;
-			yvalt = +egyseg;
-			mehetfel = false;
-			mehetjobbra = true;
-			mehetbalra = true;
+		if (mehetLe == true && keyCode == java.awt.event.KeyEvent.VK_DOWN) {
+			xValt = 0;
+			yValt = +egyseg;
+			mehetFel = false;
+			mehetJobbra = true;
+			mehetBalra = true;
 		}
-		if (e.getKeyCode() == 113) {
+		if (keyCode == java.awt.event.KeyEvent.VK_F2) {
 			reset();
 		}
 	}
-
-	@Override
-    public void keyReleased(KeyEvent arg0) {
-	}
-
-	@Override
-    public void keyTyped(KeyEvent arg0) {
-	}
-
 	/*
 	 * A run met�dus hivja meg megadott id�k�z�nk�nt a mozgat� f�ggv�nyt
 	 */
