@@ -1,10 +1,35 @@
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.util.*;
+package game;
+import iooperations.FileHandler;
 
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
+import java.util.Vector;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import toplist.Toplist;
+
+import comparator.Comp;
 
 public class Snake extends JFrame implements KeyListener, Runnable {
 	/**
@@ -19,7 +44,8 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	int[] pozy = new int[125];
 	Point[] p = new Point[125];
 	Random r = new Random();
-
+	FileHandler fileHandler;
+	
 	JButton[] kocka = new JButton[125];
 	JFrame frame;
 	JPanel jatekter, pontszam, top;
@@ -29,11 +55,11 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	JLabel pontkiiras;
 	JScrollPane scrollpane;
 
-	ArrayList<Toplist> lista = new ArrayList<Toplist>();
+	public List<Toplist> lista = new ArrayList<Toplist>();
 
 	/*
-	 * Az értékek alaphelyzetbe állítása és a toplistát tartalmazó fájl
-	 * megnyitása
+	 * Az ï¿½rtï¿½kek alaphelyzetbe ï¿½llï¿½tï¿½sa ï¿½s a toplistï¿½t tartalmazï¿½ fï¿½jl
+	 * megnyitï¿½sa
 	 */
 	public void init() {
 		pozx[0] = 24 * egyseg;
@@ -51,11 +77,11 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		mehetle = true;
 		evett = true;
 		gameover = false;
-		fajlmegnyitas();
+		fileHandler.fajlmegnyitas(this);
 	}
 
 	/*
-	 * A mozgatás elindításának függvénye.
+	 * A mozgatï¿½s elindï¿½tï¿½sï¿½nak fï¿½ggvï¿½nye.
 	 */
 	public void start() {
 		fut = true;
@@ -63,28 +89,28 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	}
 
 	/*
-	 * A Snake() függvény. Ez a program lelke. Itt történik az ablak
-	 * létrehozása, az ablak minden elemények hozzáadása, az értékek
-	 * inicializálása, az elsõ snake létrehozása, valamint itt híodik meg a
-	 * "mozgató" függvény is
+	 * A Snake() fï¿½ggvï¿½ny. Ez a program lelke. Itt tï¿½rtï¿½nik az ablak
+	 * lï¿½trehozï¿½sa, az ablak minden elemï¿½nyek hozzï¿½adï¿½sa, az ï¿½rtï¿½kek
+	 * inicializï¿½lï¿½sa, az elsï¿½ snake lï¿½trehozï¿½sa, valamint itt hï¿½odik meg a
+	 * "mozgatï¿½" fï¿½ggvï¿½ny is
 	 */
 	Snake() {
-		// Egy WIDTH, HEIGHT méretekkel rendelkezõ abalak létrehozása
+		// Egy WIDTH, HEIGHT mï¿½retekkel rendelkezï¿½ abalak lï¿½trehozï¿½sa
 		frame = new JFrame("Snake v0.7");
 		frame.setSize(WIDTH, HEIGHT);
 
-		// Az ablak részeinek létrehozása
+		// Az ablak rï¿½szeinek lï¿½trehozï¿½sa
 		jatekter = new JPanel();
 		pontszam = new JPanel();
 		top = new JPanel();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		// Értékek inicializálása és a menü létrehozása
+		// ï¿½rtï¿½kek inicializï¿½lï¿½sa ï¿½s a menï¿½ lï¿½trehozï¿½sa
 		init();
 		menu();
 
-		// A pálya részeinek részletes beállítása (pozíció, szélesség,
-		// magasság, szín) és hozzáadása az ablakhoz
+		// A pï¿½lya rï¿½szeinek rï¿½szletes beï¿½llï¿½tï¿½sa (pozï¿½ciï¿½, szï¿½lessï¿½g,
+		// magassï¿½g, szï¿½n) ï¿½s hozzï¿½adï¿½sa az ablakhoz
 		frame.add(jatekter, BorderLayout.CENTER);
 		frame.add(pontszam, BorderLayout.SOUTH);
 		frame.setLayout(null);
@@ -96,7 +122,7 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		top.setBounds(0, 0, palyasz, palyam);
 		top.setBackground(Color.LIGHT_GRAY);
 
-		// Keret megrajzolása és hozzáadása a pályához
+		// Keret megrajzolï¿½sa ï¿½s hozzï¿½adï¿½sa a pï¿½lyï¿½hoz
 		keret[0] = new JPanel();
 		keret[0].setBounds(0, 0, palyasz, egyseg);
 		keret[1] = new JPanel();
@@ -110,65 +136,68 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		jatekter.add(keret[2]);
 		jatekter.add(keret[3]);
 
-		// Az elsõ snake létrehozása és kirajzolása
+		// Az elsï¿½ snake lï¿½trehozï¿½sa ï¿½s kirajzolï¿½sa
 		elsoSnake();
 
-		// A pontszám kíírása a képernyõre
-		pontkiiras = new JLabel("Pontszám: " + pontok);
+		// A pontszï¿½m kï¿½ï¿½rï¿½sa a kï¿½pernyï¿½re
+		pontkiiras = new JLabel("Pontszï¿½m: " + pontok);
 		pontkiiras.setForeground(Color.BLACK);
 		pontszam.add(pontkiiras);
 
-		// Az ablak beállításai
+		// Az ablak beï¿½llï¿½tï¿½sai
 		frame.setResizable(false);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 		frame.addKeyListener(this);
 
-		// A mozgatás elindítása
+		// A mozgatï¿½s elindï¿½tï¿½sa
 		start();
 	}
 
 	/*
-	 * Ez a menüt létrehozõ függvény. Létrehozza a menüket, hozzáadja a
-	 * funkcióikat, és a képernyõre viszi azokat
+	 * Ez a menï¿½t lï¿½trehozï¿½ fï¿½ggvï¿½ny. Lï¿½trehozza a menï¿½ket, hozzï¿½adja a
+	 * funkciï¿½ikat, ï¿½s a kï¿½pernyï¿½re viszi azokat
 	 */
 	public void menu() {
-		// A 3 menupont létrehozása
+		// A 3 menupont lï¿½trehozï¿½sa
 		menubar = new JMenuBar();
-		jatek = new JMenu("Játék");
-		beallitasok = new JMenu("Beállítások");
-		segitseg = new JMenu("Segítség");
+		jatek = new JMenu("Jï¿½tï¿½k");
+		beallitasok = new JMenu("Beï¿½llï¿½tï¿½sok");
+		segitseg = new JMenu("Segï¿½tsï¿½g");
 
-		// A 3 menupontokon belüli lehetõségek létrehozása
-		JMenuItem ujjatek = new JMenuItem("Új Játék (F2)");
+		// A 3 menupontokon belï¿½li lehetï¿½sï¿½gek lï¿½trehozï¿½sa
+		JMenuItem ujjatek = new JMenuItem("ï¿½j Jï¿½tï¿½k (F2)");
 		JMenuItem toplist = new JMenuItem("Toplista");
-		JMenuItem kilepes = new JMenuItem("Kilépés (ALT+F4)");
+		JMenuItem kilepes = new JMenuItem("Kilï¿½pï¿½s (ALT+F4)");
 
-		JMenuItem nehez = new JMenuItem("Nehéz");
-		JMenuItem normal = new JMenuItem("Normál");
-		JMenuItem konnyu = new JMenuItem("Könnyû");
+		JMenuItem nehez = new JMenuItem("Nehï¿½z");
+		JMenuItem normal = new JMenuItem("Normï¿½l");
+		JMenuItem konnyu = new JMenuItem("Kï¿½nnyï¿½");
 
-		JMenuItem iranyitas = new JMenuItem("Irányítás");
-		JMenuItem keszito = new JMenuItem("Készítõ");
+		JMenuItem iranyitas = new JMenuItem("Irï¿½nyï¿½tï¿½s");
+		JMenuItem keszito = new JMenuItem("Kï¿½szï¿½tï¿½");
 
-		// Az Új Játék, a Toplista és a Kilépés funkciók hozzárendelése
+		// Az ï¿½j Jï¿½tï¿½k, a Toplista ï¿½s a Kilï¿½pï¿½s funkciï¿½k hozzï¿½rendelï¿½se
 		ujjatek.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				reset();
 			}
 		});
 		toplist.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				JOptionPane.showMessageDialog(jatekter, scrollpane);
 			}
 		});
 		kilepes.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
 		});
 
-		// Ezek hozzáadása a Játék menüponthoz
+		// Ezek hozzï¿½adï¿½sa a Jï¿½tï¿½k menï¿½ponthoz
 		jatek.add(ujjatek);
 		jatek.addSeparator();
 		jatek.add(toplist);
@@ -176,24 +205,27 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		jatek.add(kilepes);
 		menubar.add(jatek);
 
-		// A sebesség változtatásának hozzárendelése
+		// A sebessï¿½g vï¿½ltoztatï¿½sï¿½nak hozzï¿½rendelï¿½se
 		nehez.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				sebesseg = 50;
 			}
 		});
 		normal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				sebesseg = 70;
 			}
 		});
 		konnyu.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+			@Override
+            public void actionPerformed(ActionEvent e) {
 				sebesseg = 90;
 			}
 		});
 
-		// Ezek hozzáadása a Beállítások menüponthoz
+		// Ezek hozzï¿½adï¿½sa a Beï¿½llï¿½tï¿½sok menï¿½ponthoz
 		beallitasok.add(nehez);
 		beallitasok.addSeparator();
 		beallitasok.add(normal);
@@ -201,197 +233,147 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		beallitasok.add(konnyu);
 		menubar.add(beallitasok);
 
-		// A segítségek funkcióinak megvalósítása
+		// A segï¿½tsï¿½gek funkciï¿½inak megvalï¿½sï¿½tï¿½sa
 		keszito.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekter, "Készítõ: Kérlek Refaktorálj\n" + "Programnév: Snake\n" + "Verziószám: v0.7");
+			@Override
+            public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(jatekter, "Kï¿½szï¿½tï¿½: Kï¿½rlek Refaktorï¿½lj\n" + "Programnï¿½v: Snake\n" + "Verziï¿½szï¿½m: v0.7");
 			}
 		});
 		iranyitas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekter, "Irányítás a kurzor segítségével:\n" + "-Fel nyíl: a kígyó felfele mozog\n"
-						+ "-Le nyíl: a kígyó lefele mozog\n" + "-Jobbra nyíl: a kígyó jobbra mozog\n" + "-Balra nyíl: a kígyó balra mozog\n");
+			@Override
+            public void actionPerformed(ActionEvent e) {
+				JOptionPane.showMessageDialog(jatekter, "Irï¿½nyï¿½tï¿½s a kurzor segï¿½tsï¿½gï¿½vel:\n" + "-Fel nyï¿½l: a kï¿½gyï¿½ felfele mozog\n"
+						+ "-Le nyï¿½l: a kï¿½gyï¿½ lefele mozog\n" + "-Jobbra nyï¿½l: a kï¿½gyï¿½ jobbra mozog\n" + "-Balra nyï¿½l: a kï¿½gyï¿½ balra mozog\n");
 			}
 		});
 
-		// Ezek hozzáadása a Segítség menüponthoz
+		// Ezek hozzï¿½adï¿½sa a Segï¿½tsï¿½g menï¿½ponthoz
 		segitseg.add(keszito);
 		segitseg.addSeparator();
 		segitseg.add(iranyitas);
 		menubar.add(segitseg);
 
-		// A teljes menü megjelenítése az ablakon
+		// A teljes menï¿½ megjelenï¿½tï¿½se az ablakon
 		frame.setJMenuBar(menubar);
 	}
 
 	/*
-	 * Az újraindító függvény. Ennek meghívásakor az érték újra alapállapotba
-	 * kerülnek, ami eddig az ablakon volt az eltûnik, a mozgatás megáll, a
-	 * keret, az elsõ snake és a pontszám újra kirajzoldik, és meghívódik a
-	 * mozgató függvény
+	 * Az ï¿½jraindï¿½tï¿½ fï¿½ggvï¿½ny. Ennek meghï¿½vï¿½sakor az ï¿½rtï¿½k ï¿½jra alapï¿½llapotba
+	 * kerï¿½lnek, ami eddig az ablakon volt az eltï¿½nik, a mozgatï¿½s megï¿½ll, a
+	 * keret, az elsï¿½ snake ï¿½s a pontszï¿½m ï¿½jra kirajzoldik, ï¿½s meghï¿½vï¿½dik a
+	 * mozgatï¿½ fï¿½ggvï¿½ny
 	 */
 	void reset() {
-		// Az értékek kezdeti helyzetbe állítása
+		// Az ï¿½rtï¿½kek kezdeti helyzetbe ï¿½llï¿½tï¿½sa
 		init();
 
-		// A pálya lepucolása
+		// A pï¿½lya lepucolï¿½sa
 		jatekter.removeAll();
 		scrollpane.removeAll();
 
-		// Ha az elõzõ játékban meghalt a kígyó, akkor a játék vége kijelzõ
-		// törlése az ablakból
+		// Ha az elï¿½zï¿½ jï¿½tï¿½kban meghalt a kï¿½gyï¿½, akkor a jï¿½tï¿½k vï¿½ge kijelzï¿½
+		// tï¿½rlï¿½se az ablakbï¿½l
 		if (gameover == true) {
 			frame.remove(top);
 		}
 
-		// A keret hozzáadása a pályához
+		// A keret hozzï¿½adï¿½sa a pï¿½lyï¿½hoz
 		jatekter.add(keret[0]);
 		jatekter.add(keret[1]);
 		jatekter.add(keret[2]);
 		jatekter.add(keret[3]);
 
-		// Az elsõ kígyó létrehozása, kirajzolása
+		// Az elsï¿½ kï¿½gyï¿½ lï¿½trehozï¿½sa, kirajzolï¿½sa
 		elsoSnake();
 
-		// A pálya hozzáadása az ablakhoz, annak újrarajzolása és a pontszám
-		// kiírása
+		// A pï¿½lya hozzï¿½adï¿½sa az ablakhoz, annak ï¿½jrarajzolï¿½sa ï¿½s a pontszï¿½m
+		// kiï¿½rï¿½sa
 		frame.add(jatekter, BorderLayout.CENTER);
 		frame.repaint();
 		frame.setVisible(true);
-		pontkiiras.setText("Pontszám: " + pontok);
+		pontkiiras.setText("Pontszï¿½m: " + pontok);
 
-		// A mozgatás elindítása
+		// A mozgatï¿½s elindï¿½tï¿½sa
 		start();
 	}
 
 	/*
-	 * Az elsõ snake létrehozása és a pályára rajzolása.
+	 * Az elsï¿½ snake lï¿½trehozï¿½sa ï¿½s a pï¿½lyï¿½ra rajzolï¿½sa.
 	 */
 	void elsoSnake() {
-		// Minden kockát külön rajzol ki a függvény, ezért a ciklus
+		// Minden kockï¿½t kï¿½lï¿½n rajzol ki a fï¿½ggvï¿½ny, ezï¿½rt a ciklus
 		for (int i = 0; i < hossz; i++) {
-			// Egy "kocka" létrehozása és annak beállításai (helyzet, szín)
+			// Egy "kocka" lï¿½trehozï¿½sa ï¿½s annak beï¿½llï¿½tï¿½sai (helyzet, szï¿½n)
 			kocka[i] = new JButton();
 			kocka[i].setEnabled(false);
 			kocka[i].setBounds(pozx[i], pozy[i], egyseg, egyseg);
 			kocka[i].setBackground(Color.BLACK);
 
-			// A kocka megjelenítése a pályán
+			// A kocka megjelenï¿½tï¿½se a pï¿½lyï¿½n
 			jatekter.add(kocka[i]);
 
-			// A következõ elem koordinátáinak a megváltoztatása
+			// A kï¿½vetkezï¿½ elem koordinï¿½tï¿½inak a megvï¿½ltoztatï¿½sa
 			pozx[i + 1] = pozx[i] - egyseg;
 			pozy[i + 1] = pozy[i];
 		}
 	}
 
 	/*
-	 * Ez a függvény létrehozza az új ételt a pályán random helyen, és
+	 * Ez a fï¿½ggvï¿½ny lï¿½trehozza az ï¿½j ï¿½telt a pï¿½lyï¿½n random helyen, ï¿½s
 	 * kirajzolja azt
 	 */
 	void novekszik() {
-		// Létrehozza az új ételt, és hozzáadja a pályához
+		// Lï¿½trehozza az ï¿½j ï¿½telt, ï¿½s hozzï¿½adja a pï¿½lyï¿½hoz
 		kocka[hossz] = new JButton();
 		kocka[hossz].setEnabled(false);
 		kocka[hossz].setBackground(Color.BLACK);
 		jatekter.add(kocka[hossz]);
 
-		// Randomgenerátorral létrehozza az étel x,y koordinátáit
+		// Randomgenerï¿½torral lï¿½trehozza az ï¿½tel x,y koordinï¿½tï¿½it
 		int kajax = 20 + (egyseg * r.nextInt(46));
 		int kajay = 20 + (egyseg * r.nextInt(26));
 
-		// Beállítja a koordinátáit a kajának, és kirajzolja azt a megadott
-		// pozícióban
+		// Beï¿½llï¿½tja a koordinï¿½tï¿½it a kajï¿½nak, ï¿½s kirajzolja azt a megadott
+		// pozï¿½ciï¿½ban
 		pozx[hossz] = kajax;
 		pozy[hossz] = kajay;
 		kocka[hossz].setBounds(pozx[hossz], pozy[hossz], egyseg, egyseg);
 
-		// Megnöveli a kígyó hosszát jelzõ változót
+		// Megnï¿½veli a kï¿½gyï¿½ hosszï¿½t jelzï¿½ vï¿½ltozï¿½t
 		hossz++;
 	}
 
 	/*
-	 * A fájlmegnyitó függvény megnyitja a "toplist.ser" nevû fájlt, mely a
-	 * toplista szereplõit tartalmazza és ezeket a lista nevû ArrayListben
-	 * eltárolja (deszerializálás)
-	 */
-	@SuppressWarnings("unchecked")
-	void fajlmegnyitas() {
-		// A fájl megnyitása
-		try {
-			InputStream file = new FileInputStream("toplista.ser");
-			InputStream buffer = new BufferedInputStream(file);
-			ObjectInput in;
-			in = new ObjectInputStream(buffer);
-
-			// A fájl tartalmának bemásolása a lista ArrayListbe
-			lista = (ArrayList<Toplist>) in.readObject();
-
-			// A fájl bezárása
-			in.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * A fájlbaíró függvény a "toplista.ser" nevû fájlba beírja a legfrissebb
-	 * toplista szereplõit (szerializálás)
-	 */
-	void fajlbairas() {
-		// A fájl megnyitása
-		try {
-			OutputStream file = new FileOutputStream("toplista.ser");
-
-			OutputStream buffer = new BufferedOutputStream(file);
-			ObjectOutput out;
-			out = new ObjectOutputStream(buffer);
-
-			// A lista ArrayList fájlba írása
-			out.writeObject(lista);
-
-			// A fájl bezárása
-			out.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * Ez a függvény a játék végét vizsgálja. Megnézi, hogy a kígyó halála után
-	 * felkerül-e a toplistára a játékos az elért eredményével. Ha igen akkor
-	 * bekéri a nevét, és frissíti a toplistát. Ha nem akkor egy játék vége
-	 * képernyõt rajzol ki. A végén pedig szerializál.
+	 * Ez a fï¿½ggvï¿½ny a jï¿½tï¿½k vï¿½gï¿½t vizsgï¿½lja. Megnï¿½zi, hogy a kï¿½gyï¿½ halï¿½la utï¿½n
+	 * felkerï¿½l-e a toplistï¿½ra a jï¿½tï¿½kos az elï¿½rt eredmï¿½nyï¿½vel. Ha igen akkor
+	 * bekï¿½ri a nevï¿½t, ï¿½s frissï¿½ti a toplistï¿½t. Ha nem akkor egy jï¿½tï¿½k vï¿½ge
+	 * kï¿½pernyï¿½t rajzol ki. A vï¿½gï¿½n pedig szerializï¿½l.
 	 */
 	void toplistabatesz() {
-		// A pálya törlése a képernyõrõl.
+		// A pï¿½lya tï¿½rlï¿½se a kï¿½pernyï¿½rï¿½l.
 		frame.remove(jatekter);
 
-		// Ha az elért eredmény jobb az eddigi legkisebb eredménynél
+		// Ha az elï¿½rt eredmï¿½ny jobb az eddigi legkisebb eredmï¿½nynï¿½l
 		if (pontok > lista.get(9).getpont()) {
-			// Egy ArrayList létrehozása, mely a megadott nevet tárolja
+			// Egy ArrayList lï¿½trehozï¿½sa, mely a megadott nevet tï¿½rolja
 			final ArrayList<String> holder = new ArrayList<String>();
 
-			// A kiírások és a szövegmezõ létrehozása
-			JLabel nyert1 = new JLabel("A játéknak vége!");
-			JLabel nyert2 = new JLabel("Gratulálok! Felkerültél a toplistára. Kérlek add meg a neved (max 10 betû):");
+			// A kiï¿½rï¿½sok ï¿½s a szï¿½vegmezï¿½ lï¿½trehozï¿½sa
+			JLabel nyert1 = new JLabel("A jï¿½tï¿½knak vï¿½ge!");
+			JLabel nyert2 = new JLabel("Gratulï¿½lok! Felkerï¿½ltï¿½l a toplistï¿½ra. Kï¿½rlek add meg a neved (max 10 betï¿½):");
 			final JTextField newnev = new JTextField(10);
 
-			// Ezek hozzáadása a top panelhez
+			// Ezek hozzï¿½adï¿½sa a top panelhez
 			top.removeAll();
 			top.add(nyert1);
 			top.add(nyert2);
 			top.add(newnev);
 
-			// A szövegmezõ tartalmának hozzásadása a holderhez
+			// A szï¿½vegmezï¿½ tartalmï¿½nak hozzï¿½sadï¿½sa a holderhez
 			newnev.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent e) {
+				@Override
+                public void actionPerformed(ActionEvent e) {
 					synchronized (holder) {
 						holder.add(newnev.getText());
 						holder.notify();
@@ -400,12 +382,12 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 				}
 			});
 
-			// A top panel hozzáadása az ablakhoz, és az ablak újrarajzolása
+			// A top panel hozzï¿½adï¿½sa az ablakhoz, ï¿½s az ablak ï¿½jrarajzolï¿½sa
 			frame.add(top, BorderLayout.CENTER);
 			frame.setVisible(true);
 			frame.repaint();
 
-			// Várakozás a szövegezõ kitöltéséig
+			// Vï¿½rakozï¿½s a szï¿½vegezï¿½ kitï¿½ltï¿½sï¿½ig
 			synchronized (holder) {
 				while (holder.isEmpty())
 					try {
@@ -415,55 +397,55 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 					}
 			}
 
-			// A lista utolsó elemének kicserélése az új listaelemmel és a lista
-			// sorbarendezése
+			// A lista utolsï¿½ elemï¿½nek kicserï¿½lï¿½se az ï¿½j listaelemmel ï¿½s a lista
+			// sorbarendezï¿½se
 			Comp comp = new Comp();
 			lista.remove(9);
 			lista.add(new Toplist(holder.remove(0), pontok));
 			Collections.sort(lista, comp);
 
-			// A toplista frissítése, és kirajzolása az ablakra
+			// A toplista frissï¿½tï¿½se, ï¿½s kirajzolï¿½sa az ablakra
 			toplistafrissites();
 			top.removeAll();
 			top.add(scrollpane);
 			frame.repaint();
-			// Ha az eredmény nincs bent a legjobb 10-be
+			// Ha az eredmï¿½ny nincs bent a legjobb 10-be
 		} else {
-			// A kiirások létrehozása és hozzáadása az ablakhoz
-			JLabel nemnyert1 = new JLabel("A játéknak vége!");
-			JLabel nemnyert2 = new JLabel("Sajnos nem került be az eredményed a legjobb 10-be. Próbálkozz újra (F2).");
+			// A kiirï¿½sok lï¿½trehozï¿½sa ï¿½s hozzï¿½adï¿½sa az ablakhoz
+			JLabel nemnyert1 = new JLabel("A jï¿½tï¿½knak vï¿½ge!");
+			JLabel nemnyert2 = new JLabel("Sajnos nem kerï¿½lt be az eredmï¿½nyed a legjobb 10-be. Prï¿½bï¿½lkozz ï¿½jra (F2).");
 			nemnyert1.setForeground(Color.BLACK);
 			nemnyert2.setForeground(Color.BLACK);
 			top.removeAll();
 			top.add(nemnyert1);
 			top.add(nemnyert2);
 
-			// A toplista frissítése és a top panel hozzáadása az ablakhoz
+			// A toplista frissï¿½tï¿½se ï¿½s a top panel hozzï¿½adï¿½sa az ablakhoz
 			toplistafrissites();
 			frame.add(top, BorderLayout.CENTER);
 			frame.setVisible(true);
 			frame.repaint();
 		}
-		// Szerializálás
-		fajlbairas();
+		// Szerializï¿½lï¿½s
+		fileHandler.fajlbairas(this);
 	}
 
 	/*
-	 * Ez a függvény a toplistát egy táblázatba rakja
+	 * Ez a fï¿½ggvï¿½ny a toplistï¿½t egy tï¿½blï¿½zatba rakja
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void toplistafrissites() {
-		// A táblázat fejlécének létrehozása
+		// A tï¿½blï¿½zat fejlï¿½cï¿½nek lï¿½trehozï¿½sa
 		Vector colnames = new Vector();
-		colnames.add("Név");
+		colnames.add("Nï¿½v");
 		colnames.add("Pont");
 
-		// A táblázat létrehozása egy ScrollPane-ben
+		// A tï¿½blï¿½zat lï¿½trehozï¿½sa egy ScrollPane-ben
 		DefaultTableModel tablazatmodell = new DefaultTableModel(colnames, 0);
 		JTable tablazat = new JTable(tablazatmodell);
 		scrollpane = new JScrollPane(tablazat);
 
-		// A táblázat feltöltése a lista elemeivel
+		// A tï¿½blï¿½zat feltï¿½ltï¿½se a lista elemeivel
 		for (Toplist i : lista) {
 			String[] row = { i.getnev(), i.getstrpont() };
 			tablazatmodell.addRow(row);
@@ -472,51 +454,51 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 	}
 
 	/*
-	 * A mozgató függvény megváltoztatja a kígyó pozícióját a megadott irányba,
-	 * és közben vizsgálja, hogy a kígyó nem ütközött-e falnak vagy magának,
+	 * A mozgatï¿½ fï¿½ggvï¿½ny megvï¿½ltoztatja a kï¿½gyï¿½ pozï¿½ciï¿½jï¿½t a megadott irï¿½nyba,
+	 * ï¿½s kï¿½zben vizsgï¿½lja, hogy a kï¿½gyï¿½ nem ï¿½tkï¿½zï¿½tt-e falnak vagy magï¿½nak,
 	 * illetve azt, hogy evett-e
 	 */
 	void mozgat() {
-		// Lekéri a kígyó összes elemének pozícióját a pályán
+		// Lekï¿½ri a kï¿½gyï¿½ ï¿½sszes elemï¿½nek pozï¿½ciï¿½jï¿½t a pï¿½lyï¿½n
 		for (int i = 0; i < hossz; i++) {
 			p[i] = kocka[i].getLocation();
 		}
 
-		// Megváltoztatja az elsõ elemnek a pozícióját a megadott irányba
+		// Megvï¿½ltoztatja az elsï¿½ elemnek a pozï¿½ciï¿½jï¿½t a megadott irï¿½nyba
 		pozx[0] = pozx[0] + xvalt;
 		pozy[0] = pozy[0] + yvalt;
 		kocka[0].setBounds(pozx[0], pozy[0], egyseg, egyseg);
 
-		// Megváltoztatja a többi elem helyzetét az elõtt lévõ elemére
+		// Megvï¿½ltoztatja a tï¿½bbi elem helyzetï¿½t az elï¿½tt lï¿½vï¿½ elemï¿½re
 		for (int i = 1; i < hossz; i++) {
 			kocka[i].setLocation(p[i - 1]);
 		}
 
-		// Ellenõrzi, hogy a kígyó nem-e ment önmagába
+		// Ellenï¿½rzi, hogy a kï¿½gyï¿½ nem-e ment ï¿½nmagï¿½ba
 		for (int i = 1; i < hossz - 1; i++) {
 			if (p[0].equals(p[i])) {
 				magabament = true;
 			}
 		}
 
-		// Ellenõrzi, hogy a kígyó nem-e ment önmagába vagy falnak. Ha igen
-		// akkor a játéknak vége procedúra zajlik le, illetve leáll a mozgatás
+		// Ellenï¿½rzi, hogy a kï¿½gyï¿½ nem-e ment ï¿½nmagï¿½ba vagy falnak. Ha igen
+		// akkor a jï¿½tï¿½knak vï¿½ge procedï¿½ra zajlik le, illetve leï¿½ll a mozgatï¿½s
 		if ((pozx[0] + 10 == palyasz) || (pozx[0] == 0) || (pozy[0] == 0) || (pozy[0] + 10 == palyam) || (magabament == true)) {
 			fut = false;
 			gameover = true;
 			toplistabatesz();
 		}
 
-		// Ellenõrzi, hogy a kígyó nem érte-e el az ételt. Ha igen akkor növeli
-		// a pontszámot
+		// Ellenï¿½rzi, hogy a kï¿½gyï¿½ nem ï¿½rte-e el az ï¿½telt. Ha igen akkor nï¿½veli
+		// a pontszï¿½mot
 		if (pozx[0] == pozx[hossz - 1] && pozy[0] == pozy[hossz - 1]) {
 			evett = true;
 			pontok = pontok + 5;
-			pontkiiras.setText("Pontszám: " + pontok);
+			pontkiiras.setText("Pontszï¿½m: " + pontok);
 		}
 
-		// Ha evett, akkor létrehozza az új ételt és növeli a kígyót, különben
-		// az étel ott marad ahol volt
+		// Ha evett, akkor lï¿½trehozza az ï¿½j ï¿½telt ï¿½s nï¿½veli a kï¿½gyï¿½t, kï¿½lï¿½nben
+		// az ï¿½tel ott marad ahol volt
 		if (evett == true) {
 			novekszik();
 			evett = false;
@@ -524,16 +506,17 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 			kocka[hossz - 1].setBounds(pozx[hossz - 1], pozy[hossz - 1], egyseg, egyseg);
 		}
 
-		// A pálya frissítése
+		// A pï¿½lya frissï¿½tï¿½se
 		jatekter.repaint();
 		frame.setVisible(true);
 	}
 
 	/*
-	 * A billentyû lenyomását érzékelõ függvény, mely megfelelõ gomb lenyomására
-	 * a megfelelõ mûveletet hajtja végre
+	 * A billentyï¿½ lenyomï¿½sï¿½t ï¿½rzï¿½kelï¿½ fï¿½ggvï¿½ny, mely megfelelï¿½ gomb lenyomï¿½sï¿½ra
+	 * a megfelelï¿½ mï¿½veletet hajtja vï¿½gre
 	 */
-	public void keyPressed(KeyEvent e) {
+	@Override
+    public void keyPressed(KeyEvent e) {
 		if (mehetbalra == true && e.getKeyCode() == 37) {
 			xvalt = -egyseg;
 			yvalt = 0;
@@ -567,16 +550,19 @@ public class Snake extends JFrame implements KeyListener, Runnable {
 		}
 	}
 
-	public void keyReleased(KeyEvent arg0) {
+	@Override
+    public void keyReleased(KeyEvent arg0) {
 	}
 
-	public void keyTyped(KeyEvent arg0) {
+	@Override
+    public void keyTyped(KeyEvent arg0) {
 	}
 
 	/*
-	 * A run metódus hivja meg megadott idõközönként a mozgató függvényt
+	 * A run metï¿½dus hivja meg megadott idï¿½kï¿½zï¿½nkï¿½nt a mozgatï¿½ fï¿½ggvï¿½nyt
 	 */
-	public void run() {
+	@Override
+    public void run() {
 		while (fut) {
 			mozgat();
 			try {
