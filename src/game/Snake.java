@@ -28,6 +28,7 @@ import javax.swing.table.DefaultTableModel;
 
 import listeners.SnakeKeyListener;
 import toplist.Toplist;
+
 import comparator.Comp;
 
 public class Snake extends JFrame implements Runnable, SnakeInterface {
@@ -38,8 +39,8 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	private static final long serialVersionUID = 1L;
 	int WIDTH = 506;
 	int HEIGHT = 380;
-	int palyasz = 50 * EGYSEG;
-	int palyam = 30 * EGYSEG;
+	int palyaSzelesseg = 50 * EGYSEG;
+	int palyaMagassag = 30 * EGYSEG;
 	int sebesseg, pontok, hossz, xValt, yValt;
 	boolean fut, mehetBalra, mehetJobbra, mehetFel, mehetLe, evett, magabaMent, gameOver;
 	int[] pozX = new int[125];
@@ -115,22 +116,22 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		frame.add(pontSzam, BorderLayout.SOUTH);
 		frame.setLayout(null);
 		jatekTer.setLayout(null);
-		jatekTer.setBounds(0, 0, palyasz, palyam);
+		jatekTer.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
 		jatekTer.setBackground(Color.LIGHT_GRAY);
-		pontSzam.setBounds(0, palyam, palyasz, 30);
+		pontSzam.setBounds(0, palyaMagassag, palyaSzelesseg, 30);
 		pontSzam.setBackground(Color.GRAY);
-		top.setBounds(0, 0, palyasz, palyam);
+		top.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
 		top.setBackground(Color.LIGHT_GRAY);
 
 		// Keret megrajzol�sa �s hozz�ad�sa a p�ly�hoz
 		keret[0] = new JPanel();
-		keret[0].setBounds(0, 0, palyasz, EGYSEG);
+		keret[0].setBounds(0, 0, palyaSzelesseg, EGYSEG);
 		keret[1] = new JPanel();
-		keret[1].setBounds(0, 0, EGYSEG, palyam);
+		keret[1].setBounds(0, 0, EGYSEG, palyaMagassag);
 		keret[2] = new JPanel();
-		keret[2].setBounds(0, palyam - EGYSEG, palyasz, EGYSEG);
+		keret[2].setBounds(0, palyaMagassag - EGYSEG, palyaSzelesseg, EGYSEG);
 		keret[3] = new JPanel();
-		keret[3].setBounds(palyasz - EGYSEG, 0, EGYSEG, palyam);
+		keret[3].setBounds(palyaSzelesseg - EGYSEG, 0, EGYSEG, palyaMagassag);
 		jatekTer.add(keret[0]);
 		jatekTer.add(keret[1]);
 		jatekTer.add(keret[2]);
@@ -264,7 +265,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	 * keret, az els� snake �s a pontsz�m �jra kirajzoldik, �s megh�v�dik a
 	 * mozgat� f�ggv�ny
 	 */
-	void reset() {
+	public void reset() {
 		// Az �rt�kek kezdeti helyzetbe �ll�t�sa
 		init();
 
@@ -470,7 +471,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 		// Ellen�rzi, hogy a k�gy� nem-e ment �nmag�ba vagy falnak. Ha igen
 		// akkor a j�t�knak v�ge proced�ra zajlik le, illetve le�ll a mozgat�s
-		if ((pozX[0] + 10 == palyasz) || (pozX[0] == 0) || (pozY[0] == 0) || (pozY[0] + 10 == palyam) || (magabaMent == true)) {
+		if ((pozX[0] + 10 == palyaSzelesseg) || (pozX[0] == 0) || (pozY[0] == 0) || (pozY[0] + 10 == palyaMagassag) || (magabaMent == true)) {
 			fut = false;
 			gameOver = true;
 			toplistabaTesz();
@@ -498,10 +499,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		frame.setVisible(true);
 	}
 
-	/*
-	 * A billenty� lenyom�s�t �rz�kel� f�ggv�ny, mely megfelel� gomb lenyom�s�ra
-	 * a megfelel� m�veletet hajtja v�gre
-	 */
 	@Override
     public void keyPressed(int keyCode) {
 		if (mehetBalra == true && keyCode == java.awt.event.KeyEvent.VK_LEFT) {
@@ -536,9 +533,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			reset();
 		}
 	}
-	/*
-	 * A run met�dus hivja meg megadott id�k�z�nk�nt a mozgat� f�ggv�nyt
-	 */
+	
 	@Override
     public void run() {
 		while (fut) {
