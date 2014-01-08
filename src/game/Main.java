@@ -1,6 +1,8 @@
+package game;
+
 /*
- * A main() függvény.
- * Létrehoz egy SNake objektumot, mely a program alapköve.
+ * A main() fï¿½ggvï¿½ny.
+ * Lï¿½trehoz egy SNake objektumot, mely a program alapkï¿½ve.
  */
 
 public class Main {
