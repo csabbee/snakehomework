@@ -1,5 +1,5 @@
 package listeners;
-import game.SnakeInterface;
+import interfaces.SnakeInterface;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

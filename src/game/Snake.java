@@ -1,4 +1,5 @@
 package game;
+import interfaces.SnakeInterface;
 import iooperations.FileHandler;
 
 import java.awt.BorderLayout;
@@ -27,7 +28,6 @@ import javax.swing.table.DefaultTableModel;
 
 import listeners.SnakeKeyListener;
 import toplist.Toplist;
-
 import comparator.Comp;
 
 public class Snake extends JFrame implements Runnable, SnakeInterface {
