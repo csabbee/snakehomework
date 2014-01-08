@@ -1,6 +1,7 @@
+package toplist;
 import java.io.Serializable;
 
-class Toplist implements Serializable {
+public class Toplist implements Serializable {
 	/**
 	 * 
 	 */
@@ -9,8 +10,8 @@ class Toplist implements Serializable {
 	private int pont;
 
 	/*
-	 * A konstruktor létrehoz egy toplista bejegyzést a paraméterként megadott
-	 * névvel és pontszámmal
+	 * A konstruktor lï¿½trehoz egy toplista bejegyzï¿½st a paramï¿½terkï¿½nt megadott
+	 * nï¿½vvel ï¿½s pontszï¿½mmal
 	 */
 	public Toplist(String nev, int pont) {
 		this.pont = pont;
@@ -18,21 +19,21 @@ class Toplist implements Serializable {
 	}
 
 	/*
-	 * Visszatér az adott bejegyzés nevével
+	 * Visszatï¿½r az adott bejegyzï¿½s nevï¿½vel
 	 */
 	public String getnev() {
 		return nev;
 	}
 
 	/*
-	 * Visszatér az adott bejegyzés pontszámával (int)
+	 * Visszatï¿½r az adott bejegyzï¿½s pontszï¿½mï¿½val (int)
 	 */
 	public int getpont() {
 		return pont;
 	}
 
 	/*
-	 * Visszatér az adott bejegyzés pontszámával (String)
+	 * Visszatï¿½r az adott bejegyzï¿½s pontszï¿½mï¿½val (String)
 	 */
 	public String getstrpont() {
 		return Integer.toString(pont);
