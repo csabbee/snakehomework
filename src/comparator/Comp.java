@@ -1,11 +1,16 @@
+package comparator;
+
 import java.util.Comparator;
+
+import toplist.Toplist;
 
 public class Comp implements Comparator<Toplist> {
 	/*
-	 * A Comparator belsõ függvénye, melynek segítségével sorba rendezi a
-	 * Toplistát
+	 * A Comparator belsï¿½ fï¿½ggvï¿½nye, melynek segï¿½tsï¿½gï¿½vel sorba rendezi a
+	 * Toplistï¿½t
 	 */
-	public int compare(Toplist pont1, Toplist pont2) {
+	@Override
+    public int compare(Toplist pont1, Toplist pont2) {
 		int p1 = pont1.getpont();
 		int p2 = pont2.getpont();
 
