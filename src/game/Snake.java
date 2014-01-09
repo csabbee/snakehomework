@@ -16,10 +16,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -39,26 +36,24 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int palyaSzelesseg = 50 * EGYSEG;
-	int palyaMagassag = 30 * EGYSEG;
-	int sebesseg, pontok, hossz, xValt, yValt;
-	boolean fut, mehetBalra, mehetJobbra, mehetFel, mehetLe, evett, magabaMent, gameOver;
-	int[] pozX = new int[125];
-	int[] pozY = new int[125];
-	Point[] points = new Point[125];
-	Random random = new Random();
+	private int palyaSzelesseg = 50 * EGYSEG;
+	private int palyaMagassag = 30 * EGYSEG;
+	private int sebesseg, pontok, hossz, xValt, yValt;
+	private boolean fut, mehetBalra, mehetJobbra, mehetFel, mehetLe, evett, magabaMent, gameOver;
+	private int[] pozX = new int[125];
+	private int[] pozY = new int[125];
+	private Point[] points = new Point[125];
+	private Random random = new Random();
 	
-	FileHandler fileHandler;
+	private FileHandler fileHandler;
 	private List<Toplist> lista = new ArrayList<Toplist>();
 	
-	JButton[] snake = new JButton[125];
-	JFrame frame;
-	JPanel jatekTer, pontSzam, top;
-	JPanel[] keret = new JPanel[4];
-	JMenuBar menubar;
-	JMenu jatek, beallitasok, segitseg;
-	JLabel pontKiIras;
-	JScrollPane scrollpane;
+	private JButton[] snake = new JButton[125];
+	private JFrame frame;
+	private JPanel jatekTer, pontSzam, top;
+	private JPanel[] keret = new JPanel[4];
+	private JLabel pontKiIras;
+	private JScrollPane scrollPane;
 
 
 	public void init() {
@@ -138,104 +133,12 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	    this.fileHandler = fileHandler;
 	    
 		init();
-		createMenu();
 		elsoSnake();
 		
 		frame.addKeyListener(sankeKeyListener);
-		
-		start();
 	}
-
-
-	public void createMenu() {
-		menubar = new JMenuBar();
-		jatek = new JMenu("J�t�k");
-		beallitasok = new JMenu("Be�ll�t�sok");
-		segitseg = new JMenu("Seg�ts�g");
-
-		JMenuItem ujjatek = new JMenuItem("�j J�t�k (F2)");
-		JMenuItem toplist = new JMenuItem("Toplista");
-		JMenuItem kilepes = new JMenuItem("Kil�p�s (ALT+F4)");
-
-		JMenuItem nehez = new JMenuItem("Neh�z");
-		JMenuItem normal = new JMenuItem("Norm�l");
-		JMenuItem konnyu = new JMenuItem("K�nny�");
-
-		JMenuItem iranyitas = new JMenuItem("Ir�ny�t�s");
-		JMenuItem keszito = new JMenuItem("K�sz�t�");
-
-		ujjatek.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				resetGame();
-			}
-		});
-		toplist.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekTer, scrollpane);
-			}
-		});
-		kilepes.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				System.exit(0);
-			}
-		});
-
-		jatek.add(ujjatek);
-		jatek.addSeparator();
-		jatek.add(toplist);
-		jatek.addSeparator();
-		jatek.add(kilepes);
-		menubar.add(jatek);
-
-		nehez.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				sebesseg = 50;
-			}
-		});
-		normal.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				sebesseg = 70;
-			}
-		});
-		konnyu.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				sebesseg = 90;
-			}
-		});
-
-		beallitasok.add(nehez);
-		beallitasok.addSeparator();
-		beallitasok.add(normal);
-		beallitasok.addSeparator();
-		beallitasok.add(konnyu);
-		menubar.add(beallitasok);
-
-		keszito.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekTer, "K�sz�t�: K�rlek Refaktor�lj\n" + "Programn�v: Snake\n" + "Verzi�sz�m: v0.7");
-			}
-		});
-		iranyitas.addActionListener(new ActionListener() {
-			@Override
-            public void actionPerformed(ActionEvent e) {
-				JOptionPane.showMessageDialog(jatekTer, "Ir�ny�t�s a kurzor seg�ts�g�vel:\n" + "-Fel ny�l: a k�gy� felfele mozog\n"
-						+ "-Le ny�l: a k�gy� lefele mozog\n" + "-Jobbra ny�l: a k�gy� jobbra mozog\n" + "-Balra ny�l: a k�gy� balra mozog\n");
-			}
-		});
-
-		segitseg.add(keszito);
-		segitseg.addSeparator();
-		segitseg.add(iranyitas);
-		menubar.add(segitseg);
-
-		frame.setJMenuBar(menubar);
+	public void setMenuBar(JMenuBar menubar){
+	    frame.setJMenuBar(menubar);
 	}
 	
 	public void resetGame() {
@@ -244,7 +147,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 		// A p�lya lepucol�sa
 		jatekTer.removeAll();
-		scrollpane.removeAll();
+		scrollPane.removeAll();
 
 		// Ha az el�z� j�t�kban meghalt a k�gy�, akkor a j�t�k v�ge kijelz�
 		// t�rl�se az ablakb�l
@@ -371,7 +274,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			// A toplista friss�t�se, �s kirajzol�sa az ablakra
 			toplistaFrissites();
 			top.removeAll();
-			top.add(scrollpane);
+			top.add(scrollPane);
 			frame.repaint();
 			// Ha az eredm�ny nincs bent a legjobb 10-be
 		} else {
@@ -401,7 +304,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		// A t�bl�zat l�trehoz�sa egy ScrollPane-ben
 		DefaultTableModel tablazatmodell = new DefaultTableModel(colnames, 0);
 		JTable tablazat = new JTable(tablazatmodell);
-		scrollpane = new JScrollPane(tablazat);
+		scrollPane = new JScrollPane(tablazat);
 
 		// A t�bl�zat felt�lt�se a lista elemeivel
 		for (Toplist i : lista) {
@@ -515,4 +418,16 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			}
 		}
 	}
+
+    public JPanel getJatekTer() {
+        return jatekTer;
+    }
+
+    public JScrollPane getScrollPane() {
+        return scrollPane;
+    }
+
+    public void setSebesseg(int sebesseg) {
+        this.sebesseg = sebesseg;
+    }
 }
