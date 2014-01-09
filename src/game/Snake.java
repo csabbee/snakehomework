@@ -138,7 +138,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	    this.fileHandler = fileHandler;
 	    
 		init();
-		menu();
+		createMenu();
 		elsoSnake();
 		
 		frame.addKeyListener(sankeKeyListener);
@@ -146,11 +146,8 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		start();
 	}
 
-	/*
-	 * Ez a men�t l�trehoz� f�ggv�ny. L�trehozza a men�ket, hozz�adja a
-	 * funkci�ikat, �s a k�perny�re viszi azokat
-	 */
-	public void menu() {
+
+	public void createMenu() {
 		menubar = new JMenuBar();
 		jatek = new JMenu("J�t�k");
 		beallitasok = new JMenu("Be�ll�t�sok");
