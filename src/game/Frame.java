@@ -177,8 +177,8 @@ public class Frame extends JFrame {
         }
 
     public void nemNyert() {
-        JLabel nemnyert1 = new JLabel("A j�t�knak v�ge!");
-        JLabel nemnyert2 = new JLabel("Sajnos nem ker�lt be az eredm�nyed a legjobb 10-be. Pr�b�lkozz �jra (F2).");
+        JLabel nemnyert1 = new JLabel("A játéknak vége!");
+        JLabel nemnyert2 = new JLabel("Sajnos nem került be az eredményed a legjobb 10-be. Próbálkozz újra (F2).");
         nemnyert1.setForeground(Color.BLACK);
         nemnyert2.setForeground(Color.BLACK);
         top.removeAll();
@@ -196,6 +196,6 @@ public class Frame extends JFrame {
     }
 
     public void setPont(int pontok) {
-        pontKiIras.setText("Pontsz�m: " + pontok);
+        pontKiIras.setText("Pontszám: " + pontok);
     }
 }

@@ -96,13 +96,8 @@ public class Snake implements Runnable, SnakeInterface {
             pozY[i + 1] = pozY[i];
         }
     }
-
-    /*
-     * Ez a f�ggv�ny l�trehozza az �j �telt a p�ly�n random helyen, �s
-     * kirajzolja azt
-     */
+    
     void novekszik() {
-        // L�trehozza az �j �telt, �s hozz�adja a p�ly�hoz
         snake[hossz] = new JButton();
         snake[hossz].setEnabled(false);
         snake[hossz].setBackground(Color.BLACK);
