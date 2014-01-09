@@ -1,4 +1,4 @@
-package game;
+﻿package game;
 import interfaces.SnakeInterface;
 import iooperations.FileHandler;
 
@@ -33,12 +33,12 @@ import comparator.Comp;
 
 public class Snake extends JFrame implements Runnable, SnakeInterface {
     private static final int EGYSEG = 10;
+    private static final int WIDTH = 506; 
+    private static final int HEIGHT = 380;
     /**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	int WIDTH = 506;
-	int HEIGHT = 380;
 	int palyaSzelesseg = 50 * EGYSEG;
 	int palyaMagassag = 30 * EGYSEG;
 	int sebesseg, pontok, hossz, xValt, yValt;
@@ -96,7 +96,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	 */
 	public Snake(SnakeKeyListener sankeKeyListener, FileHandler fileHandler) {
 	    this.fileHandler = fileHandler;
-		// Egy WIDTH, HEIGHT m�retekkel rendelkez� abalak l�trehoz�sa
 		frame = new JFrame("Snake v0.7");
 		frame.setSize(WIDTH, HEIGHT);
 
@@ -160,13 +159,11 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	 * funkci�ikat, �s a k�perny�re viszi azokat
 	 */
 	public void menu() {
-		// A 3 menupont l�trehoz�sa
 		menubar = new JMenuBar();
 		jatek = new JMenu("J�t�k");
 		beallitasok = new JMenu("Be�ll�t�sok");
 		segitseg = new JMenu("Seg�ts�g");
 
-		// A 3 menupontokon bel�li lehet�s�gek l�trehoz�sa
 		JMenuItem ujjatek = new JMenuItem("�j J�t�k (F2)");
 		JMenuItem toplist = new JMenuItem("Toplista");
 		JMenuItem kilepes = new JMenuItem("Kil�p�s (ALT+F4)");
@@ -178,11 +175,10 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		JMenuItem iranyitas = new JMenuItem("Ir�ny�t�s");
 		JMenuItem keszito = new JMenuItem("K�sz�t�");
 
-		// Az �j J�t�k, a Toplista �s a Kil�p�s funkci�k hozz�rendel�se
 		ujjatek.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
-				reset();
+				resetGame();
 			}
 		});
 		toplist.addActionListener(new ActionListener() {
@@ -198,7 +194,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			}
 		});
 
-		// Ezek hozz�ad�sa a J�t�k men�ponthoz
 		jatek.add(ujjatek);
 		jatek.addSeparator();
 		jatek.add(toplist);
@@ -206,7 +201,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		jatek.add(kilepes);
 		menubar.add(jatek);
 
-		// A sebess�g v�ltoztat�s�nak hozz�rendel�se
 		nehez.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
@@ -226,7 +220,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			}
 		});
 
-		// Ezek hozz�ad�sa a Be�ll�t�sok men�ponthoz
 		beallitasok.add(nehez);
 		beallitasok.addSeparator();
 		beallitasok.add(normal);
@@ -234,7 +227,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		beallitasok.add(konnyu);
 		menubar.add(beallitasok);
 
-		// A seg�ts�gek funkci�inak megval�s�t�sa
 		keszito.addActionListener(new ActionListener() {
 			@Override
             public void actionPerformed(ActionEvent e) {
@@ -249,23 +241,15 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			}
 		});
 
-		// Ezek hozz�ad�sa a Seg�ts�g men�ponthoz
 		segitseg.add(keszito);
 		segitseg.addSeparator();
 		segitseg.add(iranyitas);
 		menubar.add(segitseg);
 
-		// A teljes men� megjelen�t�se az ablakon
 		frame.setJMenuBar(menubar);
 	}
-
-	/*
-	 * Az �jraind�t� f�ggv�ny. Ennek megh�v�sakor az �rt�k �jra alap�llapotba
-	 * ker�lnek, ami eddig az ablakon volt az elt�nik, a mozgat�s meg�ll, a
-	 * keret, az els� snake �s a pontsz�m �jra kirajzoldik, �s megh�v�dik a
-	 * mozgat� f�ggv�ny
-	 */
-	public void reset() {
+	
+	public void resetGame() {
 		// Az �rt�kek kezdeti helyzetbe �ll�t�sa
 		init();
 
@@ -530,7 +514,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			mehetBalra = true;
 		}else 
 		if (keyCode == java.awt.event.KeyEvent.VK_F2) {
-			reset();
+			resetGame();
 		}
 	}
 	
