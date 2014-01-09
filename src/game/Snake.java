@@ -402,9 +402,6 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		fileHandler.fajlbairas(lista);
 	}
 
-	/*
-	 * Ez a f�ggv�ny a toplist�t egy t�bl�zatba rakja
-	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	void toplistaFrissites() {
 		// A t�bl�zat fejl�c�nek l�trehoz�sa
