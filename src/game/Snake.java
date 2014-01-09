@@ -501,34 +501,34 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 	@Override
     public void keyPressed(int keyCode) {
-		if (mehetBalra == true && keyCode == java.awt.event.KeyEvent.VK_LEFT) {
+		if (mehetBalra && keyCode == java.awt.event.KeyEvent.VK_LEFT) {
 			xValt = -EGYSEG;
 			yValt = 0;
 			mehetJobbra = false;
 			mehetFel = true;
 			mehetLe = true;
-		}
-		if (mehetFel == true && keyCode == java.awt.event.KeyEvent.VK_UP) {
+		} else
+		if (mehetFel && keyCode == java.awt.event.KeyEvent.VK_UP) {
 			xValt = 0;
 			yValt = -EGYSEG;
 			mehetLe = false;
 			mehetJobbra = true;
 			mehetBalra = true;
-		}
-		if (mehetJobbra == true && keyCode == java.awt.event.KeyEvent.VK_RIGHT) {
+		} else
+		if (mehetJobbra && keyCode == java.awt.event.KeyEvent.VK_RIGHT) {
 			xValt = +EGYSEG;
 			yValt = 0;
 			mehetBalra = false;
 			mehetFel = true;
 			mehetLe = true;
-		}
-		if (mehetLe == true && keyCode == java.awt.event.KeyEvent.VK_DOWN) {
+		}else 
+		if (mehetLe && keyCode == java.awt.event.KeyEvent.VK_DOWN) {
 			xValt = 0;
 			yValt = +EGYSEG;
 			mehetFel = false;
 			mehetJobbra = true;
 			mehetBalra = true;
-		}
+		}else 
 		if (keyCode == java.awt.event.KeyEvent.VK_F2) {
 			reset();
 		}
