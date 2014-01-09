@@ -21,16 +21,14 @@ public class FileHandler {
     @SuppressWarnings("unchecked")
     public void fajlmegnyitas(List<Toplist> list) {
     	try {
-    		InputStream file = new FileInputStream("toplista.ser");
-    		InputStream buffer = new BufferedInputStream(file);
-    		ObjectInput in;
-    		in = new ObjectInputStream(buffer);
+    		InputStream is = new FileInputStream("toplista.ser");
+    		InputStream buffer = new BufferedInputStream(is);
+    		ObjectInput in = new ObjectInputStream(buffer);
     		
     		List<Toplist> fromFile = (List<Toplist>) in.readObject();
     		for (Toplist toplist : fromFile) {
                 list.add(toplist);
             }
-    
     		in.close();
     	} catch (FileNotFoundException e) {
     		e.printStackTrace();
@@ -43,9 +41,9 @@ public class FileHandler {
 
     public void fajlbairas(List<Toplist> lista) {
     	try {
-    		OutputStream file = new FileOutputStream("toplista.ser");
+    		OutputStream os = new FileOutputStream("toplista.ser");
     
-    		OutputStream buffer = new BufferedOutputStream(file);
+    		OutputStream buffer = new BufferedOutputStream(os);
     		ObjectOutput out;
     		out = new ObjectOutputStream(buffer);
 
