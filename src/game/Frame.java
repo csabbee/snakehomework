@@ -75,14 +75,13 @@ public class Frame extends JFrame {
         jatekTer.add(keret[3]);
         
 
-        pontKiIras = new JLabel("Pontsz�m: " + 0);
+        pontKiIras = new JLabel("Pontszám: " + 0);
         pontKiIras.setForeground(Color.BLACK);
         pontSzam.add(pontKiIras);
     }
 
     public void resetFrame(boolean gameOver, int pontok) {
         jatekTer.removeAll();
-        
         if (gameOver == true) {
             remove(top);
         }
@@ -94,9 +93,7 @@ public class Frame extends JFrame {
         add(jatekTer, BorderLayout.CENTER);
         repaint();
         setVisible(true);
-        pontKiIras.setText("Pontsz�m: " + pontok);
-
-
+        pontKiIras.setText("Pontszám: " + pontok);
     }
 
     public void addComponentToJatekTer(JButton jButton) {
@@ -115,7 +112,7 @@ public class Frame extends JFrame {
     void toplistaFrissites(Snake snake) {
     	// A t�bl�zat fejl�c�nek l�trehoz�sa
     	Vector colnames = new Vector();
-    	colnames.add("N�v");
+    	colnames.add("Név");
     	colnames.add("Pont");
     
     	// A t�bl�zat l�trehoz�sa egy ScrollPane-ben

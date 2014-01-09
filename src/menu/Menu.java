@@ -22,16 +22,16 @@ public class Menu extends JMenu{
         menus.add(new JMenu("Beállítások"));
         menus.add(new JMenu("Segítség"));
         
-        JMenuItem ujjatek = new JMenuItem("�j J�t�k (F2)");
+        JMenuItem ujjatek = new JMenuItem("Új Játék (F2)");
         JMenuItem toplist = new JMenuItem("Toplista");
-        JMenuItem kilepes = new JMenuItem("Kil�p�s (ALT+F4)");
+        JMenuItem kilepes = new JMenuItem("Kilépés (ALT+F4)");
 
-        JMenuItem nehez = new JMenuItem("Neh�z");
-        JMenuItem normal = new JMenuItem("Norm�l");
-        JMenuItem konnyu = new JMenuItem("K�nny�");
+        JMenuItem nehez = new JMenuItem("Nehéz");
+        JMenuItem normal = new JMenuItem("Normál");
+        JMenuItem konnyu = new JMenuItem("Könnyű");
 
-        JMenuItem iranyitas = new JMenuItem("Ir�ny�t�s");
-        JMenuItem keszito = new JMenuItem("K�sz�t�");
+        JMenuItem iranyitas = new JMenuItem("Irányítás");
+        JMenuItem keszito = new JMenuItem("Készítő");
 
         ujjatek.addActionListener(new ActionListener() {
             @Override
@@ -86,14 +86,14 @@ public class Menu extends JMenu{
         keszito.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(snake.getJatekTer(), "K�sz�t�: K�rlek Refaktor�lj\n" + "Programn�v: Snake\n" + "Verzi�sz�m: v0.7");
+                JOptionPane.showMessageDialog(snake.getJatekTer(), "Készítő: Kérlek Refaktorálj\n" + "Programnév: Snake\n" + "Verziószám: v0.7");
             }
         });
         iranyitas.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(snake.getJatekTer(), "Ir�ny�t�s a kurzor seg�ts�g�vel:\n" + "-Fel ny�l: a k�gy� felfele mozog\n"
-                        + "-Le ny�l: a k�gy� lefele mozog\n" + "-Jobbra ny�l: a k�gy� jobbra mozog\n" + "-Balra ny�l: a k�gy� balra mozog\n");
+                JOptionPane.showMessageDialog(snake.getJatekTer(), "Irányítás a kurzor segítségével:\n" + "-Fel nyíl: a kígyó felfele mozog\n"
+                        + "-Le nyíl: a kígyó lefele mozog\n" + "-Jobbra nyíl: a kígyó jobbra mozog\n" + "-Balra nyíl: a kígyó balra mozog\n");
             }
         });
 
