@@ -51,7 +51,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	FileHandler fileHandler;
 	private List<Toplist> lista = new ArrayList<Toplist>();
 	
-	JButton[] kocka = new JButton[125];
+	JButton[] snake = new JButton[125];
 	JFrame frame;
 	JPanel jatekTer, pontSzam, top;
 	JPanel[] keret = new JPanel[4];
@@ -62,6 +62,10 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 
 
 	public void init() {
+	    frame = new JFrame("Snake v0.7");
+	    frame.setSize(WIDTH, HEIGHT);
+	    
+	    
 		pozX[0] = 24 * EGYSEG;
 		pozY[0] = 14 * EGYSEG;
 		sebesseg = 70;
@@ -78,79 +82,67 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		evett = true;
 		gameOver = false;
 		fileHandler.fajlmegnyitas(lista);
+		
+	    // Az ablak r�szeinek l�trehoz�sa
+        jatekTer = new JPanel();
+        pontSzam = new JPanel();
+        top = new JPanel();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		// A p�lya r�szeinek r�szletes be�ll�t�sa (poz�ci�, sz�less�g,
+        // magass�g, sz�n) �s hozz�ad�sa az ablakhoz
+        frame.add(jatekTer, BorderLayout.CENTER);
+        frame.add(pontSzam, BorderLayout.SOUTH);
+        frame.setLayout(null);
+        jatekTer.setLayout(null);
+        jatekTer.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
+        jatekTer.setBackground(Color.LIGHT_GRAY);
+        pontSzam.setBounds(0, palyaMagassag, palyaSzelesseg, 30);
+        pontSzam.setBackground(Color.GRAY);
+        top.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
+        top.setBackground(Color.LIGHT_GRAY);
+
+        // Keret megrajzol�sa �s hozz�ad�sa a p�ly�hoz
+        keret[0] = new JPanel();
+        keret[0].setBounds(0, 0, palyaSzelesseg, EGYSEG);
+        keret[1] = new JPanel();
+        keret[1].setBounds(0, 0, EGYSEG, palyaMagassag);
+        keret[2] = new JPanel();
+        keret[2].setBounds(0, palyaMagassag - EGYSEG, palyaSzelesseg, EGYSEG);
+        keret[3] = new JPanel();
+        keret[3].setBounds(palyaSzelesseg - EGYSEG, 0, EGYSEG, palyaMagassag);
+        jatekTer.add(keret[0]);
+        jatekTer.add(keret[1]);
+        jatekTer.add(keret[2]);
+        jatekTer.add(keret[3]);
+        
+
+        // A pontsz�m k��r�sa a k�perny�re
+        pontKiIras = new JLabel("Pontsz�m: " + pontok);
+        pontKiIras.setForeground(Color.BLACK);
+        pontSzam.add(pontKiIras);
+
+        // Az ablak be�ll�t�sai
+        frame.setResizable(false);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        
 	}
 
-	/*
-	 * A mozgat�s elind�t�s�nak f�ggv�nye.
-	 */
 	public void start() {
 		fut = true;
 		(new Thread(this)).start();
 	}
 
-	/*
-	 * A Snake() f�ggv�ny. Ez a program lelke. Itt t�rt�nik az ablak
-	 * l�trehoz�sa, az ablak minden elem�nyek hozz�ad�sa, az �rt�kek
-	 * inicializ�l�sa, az els� snake l�trehoz�sa, valamint itt h�odik meg a
-	 * "mozgat�" f�ggv�ny is
-	 */
 	public Snake(SnakeKeyListener sankeKeyListener, FileHandler fileHandler) {
 	    this.fileHandler = fileHandler;
-		frame = new JFrame("Snake v0.7");
-		frame.setSize(WIDTH, HEIGHT);
-
-		// Az ablak r�szeinek l�trehoz�sa
-		jatekTer = new JPanel();
-		pontSzam = new JPanel();
-		top = new JPanel();
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-		// �rt�kek inicializ�l�sa �s a men� l�trehoz�sa
+	    
 		init();
 		menu();
-
-		// A p�lya r�szeinek r�szletes be�ll�t�sa (poz�ci�, sz�less�g,
-		// magass�g, sz�n) �s hozz�ad�sa az ablakhoz
-		frame.add(jatekTer, BorderLayout.CENTER);
-		frame.add(pontSzam, BorderLayout.SOUTH);
-		frame.setLayout(null);
-		jatekTer.setLayout(null);
-		jatekTer.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
-		jatekTer.setBackground(Color.LIGHT_GRAY);
-		pontSzam.setBounds(0, palyaMagassag, palyaSzelesseg, 30);
-		pontSzam.setBackground(Color.GRAY);
-		top.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
-		top.setBackground(Color.LIGHT_GRAY);
-
-		// Keret megrajzol�sa �s hozz�ad�sa a p�ly�hoz
-		keret[0] = new JPanel();
-		keret[0].setBounds(0, 0, palyaSzelesseg, EGYSEG);
-		keret[1] = new JPanel();
-		keret[1].setBounds(0, 0, EGYSEG, palyaMagassag);
-		keret[2] = new JPanel();
-		keret[2].setBounds(0, palyaMagassag - EGYSEG, palyaSzelesseg, EGYSEG);
-		keret[3] = new JPanel();
-		keret[3].setBounds(palyaSzelesseg - EGYSEG, 0, EGYSEG, palyaMagassag);
-		jatekTer.add(keret[0]);
-		jatekTer.add(keret[1]);
-		jatekTer.add(keret[2]);
-		jatekTer.add(keret[3]);
-
-		// Az els� snake l�trehoz�sa �s kirajzol�sa
 		elsoSnake();
-
-		// A pontsz�m k��r�sa a k�perny�re
-		pontKiIras = new JLabel("Pontsz�m: " + pontok);
-		pontKiIras.setForeground(Color.BLACK);
-		pontSzam.add(pontKiIras);
-
-		// Az ablak be�ll�t�sai
-		frame.setResizable(false);
-		frame.setLocationRelativeTo(null);
-		frame.setVisible(true);
+		
 		frame.addKeyListener(sankeKeyListener);
-
-		// A mozgat�s elind�t�sa
+		
 		start();
 	}
 
@@ -286,12 +278,12 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	
 	void elsoSnake() {
 		for (int i = 0; i < hossz; i++) {
-			kocka[i] = new JButton();
-			kocka[i].setEnabled(false);
-			kocka[i].setBounds(pozX[i], pozY[i], EGYSEG, EGYSEG);
-			kocka[i].setBackground(Color.BLACK);
+			snake[i] = new JButton();
+			snake[i].setEnabled(false);
+			snake[i].setBounds(pozX[i], pozY[i], EGYSEG, EGYSEG);
+			snake[i].setBackground(Color.BLACK);
 
-			jatekTer.add(kocka[i]);
+			jatekTer.add(snake[i]);
 
 			pozX[i + 1] = pozX[i] - EGYSEG;
 			pozY[i + 1] = pozY[i];
@@ -304,10 +296,10 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	 */
 	void novekszik() {
 		// L�trehozza az �j �telt, �s hozz�adja a p�ly�hoz
-		kocka[hossz] = new JButton();
-		kocka[hossz].setEnabled(false);
-		kocka[hossz].setBackground(Color.BLACK);
-		jatekTer.add(kocka[hossz]);
+		snake[hossz] = new JButton();
+		snake[hossz].setEnabled(false);
+		snake[hossz].setBackground(Color.BLACK);
+		jatekTer.add(snake[hossz]);
 
 		int kajax = 20 + (EGYSEG * random.nextInt(46));
 		int kajay = 20 + (EGYSEG * random.nextInt(26));
@@ -315,7 +307,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		
 		pozX[hossz] = kajax;
 		pozY[hossz] = kajay;
-		kocka[hossz].setBounds(pozX[hossz], pozY[hossz], EGYSEG, EGYSEG);
+		snake[hossz].setBounds(pozX[hossz], pozY[hossz], EGYSEG, EGYSEG);
 
 		hossz++;
 	}
@@ -430,17 +422,17 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 	void mozgat() {
 		// Lek�ri a k�gy� �sszes elem�nek poz�ci�j�t a p�ly�n
 		for (int i = 0; i < hossz; i++) {
-			points[i] = kocka[i].getLocation();
+			points[i] = snake[i].getLocation();
 		}
 
 		// Megv�ltoztatja az els� elemnek a poz�ci�j�t a megadott ir�nyba
 		pozX[0] = pozX[0] + xValt;
 		pozY[0] = pozY[0] + yValt;
-		kocka[0].setBounds(pozX[0], pozY[0], EGYSEG, EGYSEG);
+		snake[0].setBounds(pozX[0], pozY[0], EGYSEG, EGYSEG);
 
 		// Megv�ltoztatja a t�bbi elem helyzet�t az el�tt l�v� elem�re
 		for (int i = 1; i < hossz; i++) {
-			kocka[i].setLocation(points[i - 1]);
+			snake[i].setLocation(points[i - 1]);
 		}
 
 		// Ellen�rzi, hogy a k�gy� nem-e ment �nmag�ba
@@ -472,7 +464,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 			novekszik();
 			evett = false;
 		} else {
-			kocka[hossz - 1].setBounds(pozX[hossz - 1], pozY[hossz - 1], EGYSEG, EGYSEG);
+			snake[hossz - 1].setBounds(pozX[hossz - 1], pozY[hossz - 1], EGYSEG, EGYSEG);
 		}
 
 		// A p�lya friss�t�se
