@@ -23,7 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import listener.SnakeKeyListener;
-import toplist.Toplist;
+import toplist.TopListElement;
 
 import comparator.Comp;
 
@@ -42,7 +42,7 @@ public class Snake implements Runnable, SnakeInterface {
 	private Random random = new Random();
 	
 	private FileHandler fileHandler;
-	private List<Toplist> lista = new ArrayList<Toplist>();
+	private List<TopListElement> lista = new ArrayList<TopListElement>();
 	
 	private JButton[] snake = new JButton[125];
 	private Frame frame;
@@ -244,7 +244,7 @@ public class Snake implements Runnable, SnakeInterface {
 			// sorbarendez�se
 			Comp comp = new Comp();
 			lista.remove(9);
-			lista.add(new Toplist(holder.remove(0), pontok));
+			lista.add(new TopListElement(holder.remove(0), pontok));
 			Collections.sort(lista, comp);
 
 			// A toplista friss�t�se, �s kirajzol�sa az ablakra
@@ -283,7 +283,7 @@ public class Snake implements Runnable, SnakeInterface {
 		scrollPane = new JScrollPane(tablazat);
 
 		// A t�bl�zat felt�lt�se a lista elemeivel
-		for (Toplist i : lista) {
+		for (TopListElement i : lista) {
 			String[] row = { i.getnev(), i.getstrpont() };
 			tablazatmodell.addRow(row);
 		}

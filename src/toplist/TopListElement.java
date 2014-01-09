@@ -1,7 +1,7 @@
 package toplist;
 import java.io.Serializable;
 
-public class Toplist implements Serializable {
+public class TopListElement implements Serializable {
 	/**
 	 * 
 	 */
@@ -13,7 +13,7 @@ public class Toplist implements Serializable {
 	 * A konstruktor l�trehoz egy toplista bejegyz�st a param�terk�nt megadott
 	 * n�vvel �s pontsz�mmal
 	 */
-	public Toplist(String nev, int pont) {
+	public TopListElement(String nev, int pont) {
 		this.pont = pont;
 		this.nev = nev;
 	}
