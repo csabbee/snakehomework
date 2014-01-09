@@ -1,4 +1,4 @@
-package listeners;
+package listener;
 import interfaces.SnakeInterface;
 
 import java.awt.event.KeyEvent;

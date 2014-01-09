@@ -28,7 +28,7 @@ public class Toplist implements Serializable {
 	/*
 	 * Visszat�r az adott bejegyz�s pontsz�m�val (int)
 	 */
-	public int getpont() {
+	public int getPont() {
 		return pont;
 	}
 

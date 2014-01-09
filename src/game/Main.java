@@ -1,7 +1,7 @@
 package game;
 
 import iooperations.FileHandler;
-import listeners.SnakeKeyListener;
+import listener.SnakeKeyListener;
 import menu.Menu;
 import menu.MenuBar;
 
@@ -17,7 +17,7 @@ public class Main {
 		
 		menu.setSnake(snake);
 		menuBar.addMenus(menu.getMenus());
-		snake.setJMenuBar(menuBar);
+		snake.setMenuBar(menuBar);
 		
 		snakeKeyListener.setSnake(snake);
 		snake.start();

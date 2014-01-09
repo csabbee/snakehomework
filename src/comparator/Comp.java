@@ -11,8 +11,8 @@ public class Comp implements Comparator<Toplist> {
 	 */
 	@Override
     public int compare(Toplist pont1, Toplist pont2) {
-		int p1 = pont1.getpont();
-		int p2 = pont2.getpont();
+		int p1 = pont1.getPont();
+		int p2 = pont2.getPont();
 
 		if (p1 > p2) {
 			return -1;

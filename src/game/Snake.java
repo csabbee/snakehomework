@@ -23,19 +23,17 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import listeners.SnakeKeyListener;
+import listener.SnakeKeyListener;
 import toplist.Toplist;
-
 import comparator.Comp;
 
-public class Snake extends JFrame implements Runnable, SnakeInterface {
+public class Snake implements Runnable, SnakeInterface {
     private static final int EGYSEG = 10;
     private static final int WIDTH = 506; 
     private static final int HEIGHT = 380;
     /**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	private int palyaSzelesseg = 50 * EGYSEG;
 	private int palyaMagassag = 30 * EGYSEG;
 	private int sebesseg, pontok, hossz, xValt, yValt;
@@ -137,6 +135,7 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		
 		frame.addKeyListener(sankeKeyListener);
 	}
+	
 	public void setMenuBar(JMenuBar menubar){
 	    frame.setJMenuBar(menubar);
 	}
@@ -222,27 +221,27 @@ public class Snake extends JFrame implements Runnable, SnakeInterface {
 		frame.remove(jatekTer);
 
 		// Ha az el�rt eredm�ny jobb az eddigi legkisebb eredm�nyn�l
-		if (pontok > lista.get(9).getpont()) {
+		if (pontok > lista.get(9).getPont()) {
 			// Egy ArrayList l�trehoz�sa, mely a megadott nevet t�rolja
 			final ArrayList<String> holder = new ArrayList<String>();
 
 			// A ki�r�sok �s a sz�vegmez� l�trehoz�sa
 			JLabel nyert1 = new JLabel("A j�t�knak v�ge!");
 			JLabel nyert2 = new JLabel("Gratul�lok! Felker�lt�l a toplist�ra. K�rlek add meg a neved (max 10 bet�):");
-			final JTextField newnev = new JTextField(10);
+			final JTextField newNev = new JTextField(10);
 
 			// Ezek hozz�ad�sa a top panelhez
 			top.removeAll();
 			top.add(nyert1);
 			top.add(nyert2);
-			top.add(newnev);
+			top.add(newNev);
 
 			// A sz�vegmez� tartalm�nak hozz�sad�sa a holderhez
-			newnev.addActionListener(new ActionListener() {
+			newNev.addActionListener(new ActionListener() {
 				@Override
                 public void actionPerformed(ActionEvent e) {
 					synchronized (holder) {
-						holder.add(newnev.getText());
+						holder.add(newNev.getText());
 						holder.notify();
 					}
 					frame.dispose();
