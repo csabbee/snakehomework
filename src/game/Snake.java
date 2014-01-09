@@ -14,7 +14,6 @@ import java.util.Random;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
@@ -30,8 +29,6 @@ import comparator.Comp;
 
 public class Snake implements Runnable, SnakeInterface {
     private static final int EGYSEG = 10;
-    private static final int WIDTH = 506; 
-    private static final int HEIGHT = 380;
     /**
 	 * 
 	 */
@@ -58,14 +55,11 @@ public class Snake implements Runnable, SnakeInterface {
         this.fileHandler = fileHandler;
         fileHandler.fajlmegnyitas(lista);
         frame = new Frame("Snake v0.7");
-        frame.setSize(WIDTH, HEIGHT);
-        
         init();
         // Az ablak r�szeinek l�trehoz�sa
         jatekTer = new JPanel();
         pontSzam = new JPanel();
         top = new JPanel();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         
         elsoSnake();
         
@@ -73,7 +67,6 @@ public class Snake implements Runnable, SnakeInterface {
         // magass�g, sz�n) �s hozz�ad�sa az ablakhoz
         frame.add(jatekTer, BorderLayout.CENTER);
         frame.add(pontSzam, BorderLayout.SOUTH);
-        frame.setLayout(null);
         jatekTer.setLayout(null);
         jatekTer.setBounds(0, 0, palyaSzelesseg, palyaMagassag);
         jatekTer.setBackground(Color.LIGHT_GRAY);
@@ -97,15 +90,10 @@ public class Snake implements Runnable, SnakeInterface {
         jatekTer.add(keret[3]);
         
 
-        // A pontsz�m k��r�sa a k�perny�re
         pontKiIras = new JLabel("Pontsz�m: " + pontok);
         pontKiIras.setForeground(Color.BLACK);
         pontSzam.add(pontKiIras);
 
-        // Az ablak be�ll�t�sai
-        frame.setResizable(false);
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
         frame.addKeyListener(sankeKeyListener);
     }
 	
@@ -139,10 +127,7 @@ public class Snake implements Runnable, SnakeInterface {
 	}
 	
 	public void resetGame() {
-		// Az �rt�kek kezdeti helyzetbe �ll�t�sa
 		init();
-
-		// A p�lya lepucol�sa
 		jatekTer.removeAll();
 
 		// Ha az el�z� j�t�kban meghalt a k�gy�, akkor a j�t�k v�ge kijelz�
@@ -151,23 +136,18 @@ public class Snake implements Runnable, SnakeInterface {
 			frame.remove(top);
 		}
 
-		// A keret hozz�ad�sa a p�ly�hoz
 		jatekTer.add(keret[0]);
 		jatekTer.add(keret[1]);
 		jatekTer.add(keret[2]);
 		jatekTer.add(keret[3]);
 
-		// Az els� k�gy� l�trehoz�sa, kirajzol�sa
 		elsoSnake();
 
-		// A p�lya hozz�ad�sa az ablakhoz, annak �jrarajzol�sa �s a pontsz�m
-		// ki�r�sa
 		frame.add(jatekTer, BorderLayout.CENTER);
 		frame.repaint();
 		frame.setVisible(true);
 		pontKiIras.setText("Pontsz�m: " + pontok);
 
-		// A mozgat�s elind�t�sa
 		start();
 	}
 
@@ -223,8 +203,8 @@ public class Snake implements Runnable, SnakeInterface {
 			final ArrayList<String> holder = new ArrayList<String>();
 
 			// A ki�r�sok �s a sz�vegmez� l�trehoz�sa
-			JLabel nyert1 = new JLabel("A j�t�knak v�ge!");
-			JLabel nyert2 = new JLabel("Gratul�lok! Felker�lt�l a toplist�ra. K�rlek add meg a neved (max 10 bet�):");
+			JLabel nyert1 = new JLabel("A játéknak vége!");
+			JLabel nyert2 = new JLabel("Gratulálok! Felkeréltél a toplistára. Kérlek add meg a neved (max 10 betű):");
 			final JTextField newNev = new JTextField(10);
 
 			// Ezek hozz�ad�sa a top panelhez
