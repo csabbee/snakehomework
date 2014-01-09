@@ -25,6 +25,7 @@ import javax.swing.table.DefaultTableModel;
 
 import listener.SnakeKeyListener;
 import toplist.Toplist;
+
 import comparator.Comp;
 
 public class Snake implements Runnable, SnakeInterface {
@@ -47,42 +48,28 @@ public class Snake implements Runnable, SnakeInterface {
 	private List<Toplist> lista = new ArrayList<Toplist>();
 	
 	private JButton[] snake = new JButton[125];
-	private JFrame frame;
+	private Frame frame;
 	private JPanel jatekTer, pontSzam, top;
 	private JPanel[] keret = new JPanel[4];
 	private JLabel pontKiIras;
 	private JScrollPane scrollPane;
 
-
-	public void init() {
-	    frame = new JFrame("Snake v0.7");
-	    frame.setSize(WIDTH, HEIGHT);
-	    
-	    
-		pozX[0] = 24 * EGYSEG;
-		pozY[0] = 14 * EGYSEG;
-		sebesseg = 70;
-		pontok = 0;
-		hossz = 3;
-		xValt = +EGYSEG;
-		yValt = 0;
-		fut = false;
-		magabaMent = false;
-		mehetBalra = false;
-		mehetJobbra = true;
-		mehetFel = true;
-		mehetLe = true;
-		evett = true;
-		gameOver = false;
-		fileHandler.fajlmegnyitas(lista);
-		
-	    // Az ablak r�szeinek l�trehoz�sa
+	public Snake(SnakeKeyListener sankeKeyListener, FileHandler fileHandler) {
+        this.fileHandler = fileHandler;
+        fileHandler.fajlmegnyitas(lista);
+        frame = new Frame("Snake v0.7");
+        frame.setSize(WIDTH, HEIGHT);
+        
+        init();
+        // Az ablak r�szeinek l�trehoz�sa
         jatekTer = new JPanel();
         pontSzam = new JPanel();
         top = new JPanel();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// A p�lya r�szeinek r�szletes be�ll�t�sa (poz�ci�, sz�less�g,
+        
+        elsoSnake();
+        
+        // A p�lya r�szeinek r�szletes be�ll�t�sa (poz�ci�, sz�less�g,
         // magass�g, sz�n) �s hozz�ad�sa az ablakhoz
         frame.add(jatekTer, BorderLayout.CENTER);
         frame.add(pontSzam, BorderLayout.SOUTH);
@@ -119,7 +106,25 @@ public class Snake implements Runnable, SnakeInterface {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        
+        frame.addKeyListener(sankeKeyListener);
+    }
+	
+	public void init() {
+		pozX[0] = 24 * EGYSEG;
+		pozY[0] = 14 * EGYSEG;
+		sebesseg = 70;
+		pontok = 0;
+		hossz = 3;
+		xValt = +EGYSEG;
+		yValt = 0;
+		fut = false;
+		magabaMent = false;
+		mehetBalra = false;
+		mehetJobbra = true;
+		mehetFel = true;
+		mehetLe = true;
+		evett = true;
+		gameOver = false;
 	}
 
 	public void start() {
@@ -127,14 +132,7 @@ public class Snake implements Runnable, SnakeInterface {
 		(new Thread(this)).start();
 	}
 
-	public Snake(SnakeKeyListener sankeKeyListener, FileHandler fileHandler) {
-	    this.fileHandler = fileHandler;
-	    
-		init();
-		elsoSnake();
-		
-		frame.addKeyListener(sankeKeyListener);
-	}
+	
 	
 	public void setMenuBar(JMenuBar menubar){
 	    frame.setJMenuBar(menubar);
@@ -146,7 +144,6 @@ public class Snake implements Runnable, SnakeInterface {
 
 		// A p�lya lepucol�sa
 		jatekTer.removeAll();
-		scrollPane.removeAll();
 
 		// Ha az el�z� j�t�kban meghalt a k�gy�, akkor a j�t�k v�ge kijelz�
 		// t�rl�se az ablakb�l
